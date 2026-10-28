@@ -1,7 +1,7 @@
 ﻿SET XACT_ABORT ON;
 USE GestionIntegralDB;
 GO
-
+--d
 -- Eliminaci¢n de tablas en orden inverso a las dependencias para permitir recrear la base
 IF OBJECT_ID('dbo.MovimientoStockDetalle', 'U') IS NOT NULL DROP TABLE dbo.MovimientoStockDetalle;
 IF OBJECT_ID('dbo.MovimientosStock', 'U') IS NOT NULL DROP TABLE dbo.MovimientosStock;
