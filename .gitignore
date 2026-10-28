@@ -7,3 +7,4 @@
 
 # Local SQL scratch script containing a plaintext seed
 /SQLQuery1.sql
+/src/GestionIntegralDB/GestionIntegralDB.dbmdl
