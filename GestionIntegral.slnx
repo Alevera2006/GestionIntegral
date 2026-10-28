@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="GestionIntegralDB/GestionIntegralDB.sqlproj" Id="f684679e-8410-4b77-8bc7-7d5ae541d877">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="src/GestionIntegral.Domain/GestionIntegral.Domain.csproj" Id="a1b2c3d4-e5f6-7890-abcd-ef1234567890" />
+  <Project Path="src/GestionIntegral.Application/GestionIntegral.Application.csproj" Id="b2c3d4e5-f6a7-8901-bcde-f12345678901" />
+  <Project Path="src/GestionIntegral.Infrastructure/GestionIntegral.Infrastructure.csproj" Id="c3d4e5f6-a7b8-9012-cdef-123456789012" />
+  <Project Path="src/GestionIntegral.WebApi/GestionIntegral.WebApi.csproj" Id="d4e5f6a7-b8c9-0123-defa-234567890123" />
+</Solution>

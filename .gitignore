@@ -1,0 +1,9 @@
+# Visual Studio and build output
+.vs/
+**/bin/
+**/obj/
+*.user
+*.jfm
+
+# Local SQL scratch script containing a plaintext seed
+/SQLQuery1.sql

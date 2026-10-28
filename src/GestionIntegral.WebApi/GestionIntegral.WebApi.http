@@ -1,0 +1,6 @@
+@GestionIntegral.WebApi_HostAddress = http://localhost:5216
+
+GET {{GestionIntegral.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
