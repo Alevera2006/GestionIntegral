@@ -1,0 +1,75 @@
+using GestionIntegral.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace GestionIntegral.Infrastructure.Data.Configurations;
+
+public class CondicionPagoConfiguration : IEntityTypeConfiguration<CondicionPago>
+{
+    public void Configure(EntityTypeBuilder<CondicionPago> builder)
+    {
+        builder.ToTable("CondicionesPago");
+
+        builder.HasKey(e => e.IdCondicionPago);
+
+        builder.Property(e => e.IdCondicionPago)
+            .HasColumnName("IdCondicionPago")
+            .ValueGeneratedOnAdd();
+
+        builder.Property(e => e.Codigo)
+            .HasColumnName("Codigo")
+            .HasMaxLength(20)
+            .IsRequired();
+
+        builder.Property(e => e.Descripcion)
+            .HasColumnName("Descripcion")
+            .HasMaxLength(100)
+            .IsRequired();
+
+        builder.Property(e => e.Dias)
+            .HasColumnName("Dias")
+            .HasDefaultValue(0)
+            .IsRequired();
+
+        builder.Property(e => e.Activo)
+            .HasColumnName("Activo")
+            .HasDefaultValue(true)
+            .IsRequired();
+
+        builder.Property(e => e.FechaBaja)
+            .HasColumnName("FechaBaja")
+            .HasColumnType("datetime2");
+
+        builder.Property(e => e.IdUsuarioCreacion)
+            .HasColumnName("IdUsuarioCreacion")
+            .IsRequired();
+
+        builder.Property(e => e.FechaCreacion)
+            .HasColumnName("FechaCreacion")
+            .HasColumnType("datetime2")
+            .IsRequired();
+
+        builder.Property(e => e.IdUsuarioUltimaModificacion)
+            .HasColumnName("IdUsuarioUltimaModificacion");
+
+        builder.Property(e => e.FechaUltimaModificacion)
+            .HasColumnName("FechaUltimaModificacion")
+            .HasColumnType("datetime2");
+
+        builder.HasIndex(e => e.Codigo)
+            .IsUnique()
+            .HasDatabaseName("UQ_CondicionesPago_Codigo");
+
+        builder.HasOne(e => e.UsuarioCreacion)
+            .WithMany()
+            .HasForeignKey(e => e.IdUsuarioCreacion)
+            .HasConstraintName("FK_CondicionesPago_UsuariosCreacion")
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(e => e.UsuarioModificacion)
+            .WithMany()
+            .HasForeignKey(e => e.IdUsuarioUltimaModificacion)
+            .HasConstraintName("FK_CondicionesPago_UsuariosModificacion")
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}

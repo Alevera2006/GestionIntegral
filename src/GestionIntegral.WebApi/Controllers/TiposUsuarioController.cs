@@ -35,4 +35,11 @@ public class TiposUsuarioController : BaseController
         var response = await _tipoUsuarioService.CrearAsync(request, cancellationToken);
         return Result(response);
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        var response = await _tipoUsuarioService.EliminarAsync(id, cancellationToken);
+        return Result(response);
+    }
 }

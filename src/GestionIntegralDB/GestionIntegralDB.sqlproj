@@ -63,5 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="RepairSuperAdminHash.sql" />
+    <Build Include="ScriptsInitial\InsertProvincias.sql" />
   </ItemGroup>
 </Project>

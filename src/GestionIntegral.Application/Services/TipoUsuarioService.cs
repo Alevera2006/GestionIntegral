@@ -57,4 +57,26 @@ public class TipoUsuarioService : ITipoUsuarioService
 
         return BaseResponseDto<TipoUsuarioResponseDto>.Ok(_mapper.Map<TipoUsuarioResponseDto>(tipo), "Tipo de usuario creado correctamente.");
     }
+
+    public async Task<BaseResponseDto<bool>> EliminarAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var tipo = await _unitOfWork.TiposUsuario.GetByIdAsync(id, cancellationToken);
+        if (tipo is null)
+            throw new NotFoundException(nameof(TipoUsuario), id);
+
+        if (!tipo.Activo)
+            throw new BusinessException("El tipo de usuario ya se encuentra dado de baja.");
+
+        var userId = _currentUserService.UserId ?? 1;
+
+        tipo.Activo = false;
+        tipo.FechaBaja = DateTime.UtcNow;
+        tipo.IdUsuarioUltimaModificacion = userId;
+        tipo.FechaUltimaModificacion = DateTime.UtcNow;
+
+        await _unitOfWork.TiposUsuario.UpdateAsync(tipo, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return BaseResponseDto<bool>.Ok(true, "Tipo de usuario dado de baja correctamente.");
+    }
 }

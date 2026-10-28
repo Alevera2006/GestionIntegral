@@ -17,6 +17,13 @@ public class UsuarioRepository : Repository<Usuario>, IUsuarioRepository
             .FirstOrDefaultAsync(u => u.IdUsuario == id, cancellationToken);
     }
 
+    public async Task<Usuario?> GetByIdForUpdateAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(u => u.TipoUsuario)
+            .FirstOrDefaultAsync(u => u.IdUsuario == id, cancellationToken);
+    }
+
     public override async Task<IEnumerable<Usuario>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _dbSet

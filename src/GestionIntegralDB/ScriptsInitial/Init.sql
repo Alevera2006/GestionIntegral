@@ -1,6 +1,41 @@
-﻿
-:ON ERROR EXIT
+﻿SET XACT_ABORT ON;
 USE GestionIntegralDB;
+GO
+
+-- Eliminaci¢n de tablas en orden inverso a las dependencias para permitir recrear la base
+IF OBJECT_ID('dbo.MovimientoStockDetalle', 'U') IS NOT NULL DROP TABLE dbo.MovimientoStockDetalle;
+IF OBJECT_ID('dbo.MovimientosStock', 'U') IS NOT NULL DROP TABLE dbo.MovimientosStock;
+IF OBJECT_ID('dbo.Stock', 'U') IS NOT NULL DROP TABLE dbo.Stock;
+IF OBJECT_ID('dbo.TiposMovimientoStock', 'U') IS NOT NULL DROP TABLE dbo.TiposMovimientoStock;
+IF OBJECT_ID('dbo.Depositos', 'U') IS NOT NULL DROP TABLE dbo.Depositos;
+IF OBJECT_ID('dbo.CajaDetalle', 'U') IS NOT NULL DROP TABLE dbo.CajaDetalle;
+IF OBJECT_ID('dbo.CajaCabecera', 'U') IS NOT NULL DROP TABLE dbo.CajaCabecera;
+IF OBJECT_ID('dbo.EstadosCaja', 'U') IS NOT NULL DROP TABLE dbo.EstadosCaja;
+IF OBJECT_ID('dbo.TiposMovimientoCaja', 'U') IS NOT NULL DROP TABLE dbo.TiposMovimientoCaja;
+IF OBJECT_ID('dbo.MediosPago', 'U') IS NOT NULL DROP TABLE dbo.MediosPago;
+IF OBJECT_ID('dbo.Monedas', 'U') IS NOT NULL DROP TABLE dbo.Monedas;
+IF OBJECT_ID('dbo.EstadosProceso', 'U') IS NOT NULL DROP TABLE dbo.EstadosProceso;
+IF OBJECT_ID('dbo.EstadosCompra', 'U') IS NOT NULL DROP TABLE dbo.EstadosCompra;
+IF OBJECT_ID('dbo.EstadosFactura', 'U') IS NOT NULL DROP TABLE dbo.EstadosFactura;
+IF OBJECT_ID('dbo.EstadosPedido', 'U') IS NOT NULL DROP TABLE dbo.EstadosPedido;
+IF OBJECT_ID('dbo.MotivosAnulacion', 'U') IS NOT NULL DROP TABLE dbo.MotivosAnulacion;
+IF OBJECT_ID('dbo.TiposComprobante', 'U') IS NOT NULL DROP TABLE dbo.TiposComprobante;
+IF OBJECT_ID('dbo.Provincias', 'U') IS NOT NULL DROP TABLE dbo.Provincias;
+IF OBJECT_ID('dbo.CondicionesIVA', 'U') IS NOT NULL DROP TABLE dbo.CondicionesIVA;
+IF OBJECT_ID('dbo.AlicuotasImpuesto', 'U') IS NOT NULL DROP TABLE dbo.AlicuotasImpuesto;
+IF OBJECT_ID('dbo.TiposImpuesto', 'U') IS NOT NULL DROP TABLE dbo.TiposImpuesto;
+IF OBJECT_ID('dbo.ListaPreciosDetalle', 'U') IS NOT NULL DROP TABLE dbo.ListaPreciosDetalle;
+IF OBJECT_ID('dbo.ListasPrecios', 'U') IS NOT NULL DROP TABLE dbo.ListasPrecios;
+IF OBJECT_ID('dbo.Productos', 'U') IS NOT NULL DROP TABLE dbo.Productos;
+IF OBJECT_ID('dbo.SubCategorias', 'U') IS NOT NULL DROP TABLE dbo.SubCategorias;
+IF OBJECT_ID('dbo.Categorias', 'U') IS NOT NULL DROP TABLE dbo.Categorias;
+IF OBJECT_ID('dbo.ClienteContactos', 'U') IS NOT NULL DROP TABLE dbo.ClienteContactos;
+IF OBJECT_ID('dbo.Contactos', 'U') IS NOT NULL DROP TABLE dbo.Contactos;
+IF OBJECT_ID('dbo.Proveedores', 'U') IS NOT NULL DROP TABLE dbo.Proveedores;
+IF OBJECT_ID('dbo.Clientes', 'U') IS NOT NULL DROP TABLE dbo.Clientes;
+IF OBJECT_ID('dbo.CondicionesPago', 'U') IS NOT NULL DROP TABLE dbo.CondicionesPago;
+IF OBJECT_ID('dbo.Usuarios', 'U') IS NOT NULL DROP TABLE dbo.Usuarios;
+IF OBJECT_ID('dbo.TiposUsuario', 'U') IS NOT NULL DROP TABLE dbo.TiposUsuario;
 GO
 
 -- Run in SQLCMD mode with -v SuperAdminClaveHash=<BCrypt hash generated outside SQL>.
@@ -17,6 +52,10 @@ BEGIN TRY
     CREATE TABLE dbo.TiposUsuario (
         IdTipoUsuario INT IDENTITY(1,1) NOT NULL,
         Descripcion NVARCHAR(100) NOT NULL,
+        Activo BIT NOT NULL
+            CONSTRAINT DF_TiposUsuario_Activo
+            DEFAULT (1),
+        FechaBaja DATETIME2(3) NULL,
         IdUsuarioCreacion INT NOT NULL,
         FechaCreacion DATETIME2(3) NOT NULL
             CONSTRAINT DF_TiposUsuario_FechaCreacion
@@ -159,18 +198,32 @@ CREATE TABLE CondicionesPago
     Descripcion          VARCHAR(100) NOT NULL,
     Dias                 INT NOT NULL DEFAULT 0,
     Activo               BIT NOT NULL DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_CondicionesPago
         PRIMARY KEY (IdCondicionPago),
 
-    CONSTRAINT FK_CondicionesPago_Usuarios
+    CONSTRAINT FK_CondicionesPago_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
         REFERENCES Usuarios(IdUsuario),
 
+    CONSTRAINT FK_CondicionesPago_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
     CONSTRAINT UQ_CondicionesPago_Codigo
-        UNIQUE (Codigo)
+        UNIQUE (Codigo),
+
+    CONSTRAINT CK_CondicionesPago_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE Clientes
 (
@@ -187,9 +240,12 @@ CREATE TABLE Clientes
 
     Observaciones         VARCHAR(500) NULL,
     Activo                BIT NOT NULL DEFAULT 1,
+    FechaBaja             DATETIME2 NULL,
 
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_Clientes
         PRIMARY KEY (IdCliente),
@@ -198,12 +254,23 @@ CREATE TABLE Clientes
         FOREIGN KEY (IdCondicionPago)
         REFERENCES CondicionesPago(IdCondicionPago),
 
-    CONSTRAINT FK_Clientes_Usuarios
+    CONSTRAINT FK_Clientes_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
         REFERENCES Usuarios(IdUsuario),
 
+    CONSTRAINT FK_Clientes_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
     CONSTRAINT UQ_Clientes_Codigo
-        UNIQUE (Codigo)
+        UNIQUE (Codigo),
+
+    CONSTRAINT CK_Clientes_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE Proveedores
 (
@@ -220,9 +287,12 @@ CREATE TABLE Proveedores
 
     Observaciones         VARCHAR(500) NULL,
     Activo                BIT NOT NULL DEFAULT 1,
+    FechaBaja             DATETIME2 NULL,
 
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_Proveedores
         PRIMARY KEY (IdProveedor),
@@ -231,12 +301,23 @@ CREATE TABLE Proveedores
         FOREIGN KEY (IdCondicionPago)
         REFERENCES CondicionesPago(IdCondicionPago),
 
-    CONSTRAINT FK_Proveedores_Usuarios
+    CONSTRAINT FK_Proveedores_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
         REFERENCES Usuarios(IdUsuario),
 
+    CONSTRAINT FK_Proveedores_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
     CONSTRAINT UQ_Proveedores_Codigo
-        UNIQUE (Codigo)
+        UNIQUE (Codigo),
+
+    CONSTRAINT CK_Proveedores_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE Contactos
 (
@@ -283,19 +364,33 @@ CREATE TABLE Categorias
     Codigo                VARCHAR(20) NOT NULL,
     Descripcion           VARCHAR(100) NOT NULL,
     Activo                BIT NOT NULL DEFAULT 1,
+    FechaBaja             DATETIME2 NULL,
 
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_Categorias
         PRIMARY KEY (IdCategoria),
 
-    CONSTRAINT FK_Categorias_Usuarios
+    CONSTRAINT FK_Categorias_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
         REFERENCES Usuarios(IdUsuario),
 
+    CONSTRAINT FK_Categorias_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
     CONSTRAINT UQ_Categorias_Codigo
-        UNIQUE (Codigo)
+        UNIQUE (Codigo),
+
+    CONSTRAINT CK_Categorias_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE SubCategorias
 (
@@ -305,9 +400,12 @@ CREATE TABLE SubCategorias
     Codigo                VARCHAR(20) NOT NULL,
     Descripcion           VARCHAR(100) NOT NULL,
     Activo                BIT NOT NULL DEFAULT 1,
+    FechaBaja             DATETIME2 NULL,
 
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_SubCategorias
         PRIMARY KEY (IdSubCategoria),
@@ -316,9 +414,20 @@ CREATE TABLE SubCategorias
         FOREIGN KEY (IdCategoria)
         REFERENCES Categorias(IdCategoria),
 
-    CONSTRAINT FK_SubCategorias_Usuarios
+    CONSTRAINT FK_SubCategorias_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_SubCategorias_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_SubCategorias_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE Productos
 (
@@ -339,9 +448,12 @@ CREATE TABLE Productos
 
     Observaciones         VARCHAR(500) NULL,
     Activo                BIT NOT NULL DEFAULT 1,
+    FechaBaja             DATETIME2 NULL,
 
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_Productos
         PRIMARY KEY (IdProducto),
@@ -354,12 +466,23 @@ CREATE TABLE Productos
         FOREIGN KEY (IdSubCategoria)
         REFERENCES SubCategorias(IdSubCategoria),
 
-    CONSTRAINT FK_Productos_Usuarios
+    CONSTRAINT FK_Productos_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
         REFERENCES Usuarios(IdUsuario),
 
+    CONSTRAINT FK_Productos_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
     CONSTRAINT UQ_Productos_Codigo
-        UNIQUE (Codigo)
+        UNIQUE (Codigo),
+
+    CONSTRAINT CK_Productos_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE ListasPrecios
 (
@@ -371,19 +494,33 @@ CREATE TABLE ListasPrecios
     FechaHasta            DATETIME2 NULL,
 
     Activo                BIT NOT NULL DEFAULT 1,
+    FechaBaja             DATETIME2 NULL,
 
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_ListasPrecios
         PRIMARY KEY (IdListaPrecio),
 
-    CONSTRAINT FK_ListasPrecios_Usuarios
+    CONSTRAINT FK_ListasPrecios_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
         REFERENCES Usuarios(IdUsuario),
 
+    CONSTRAINT FK_ListasPrecios_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
     CONSTRAINT UQ_ListasPrecios_Codigo
-        UNIQUE (Codigo)
+        UNIQUE (Codigo),
+
+    CONSTRAINT CK_ListasPrecios_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE ListaPreciosDetalle
 (
@@ -395,6 +532,8 @@ CREATE TABLE ListaPreciosDetalle
 
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_ListaPreciosDetalle
         PRIMARY KEY (IdListaPrecioDetalle),
@@ -407,8 +546,12 @@ CREATE TABLE ListaPreciosDetalle
         FOREIGN KEY (IdProducto)
         REFERENCES Productos(IdProducto),
 
-    CONSTRAINT FK_ListaPreciosDetalle_Usuarios
+    CONSTRAINT FK_ListaPreciosDetalle_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_ListaPreciosDetalle_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
         REFERENCES Usuarios(IdUsuario),
 
     CONSTRAINT UQ_ListaPreciosDetalle
@@ -421,11 +564,14 @@ CREATE TABLE TiposImpuesto
     Descripcion          VARCHAR(100) NOT NULL,
     Activo               BIT NOT NULL
         CONSTRAINT DF_TiposImpuesto_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_TiposImpuesto_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_TiposImpuesto
         PRIMARY KEY (IdTipoImpuesto),
@@ -433,9 +579,20 @@ CREATE TABLE TiposImpuesto
     CONSTRAINT UQ_TiposImpuesto_Codigo
         UNIQUE (Codigo),
 
-    CONSTRAINT FK_TiposImpuesto_Usuarios
+    CONSTRAINT FK_TiposImpuesto_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_TiposImpuesto_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_TiposImpuesto_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE AlicuotasImpuesto
 (
@@ -452,11 +609,14 @@ CREATE TABLE AlicuotasImpuesto
 
     Activo               BIT NOT NULL
         CONSTRAINT DF_AlicuotasImpuesto_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_AlicuotasImpuesto_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_AlicuotasImpuesto
         PRIMARY KEY (IdAlicuotaImpuesto),
@@ -478,9 +638,20 @@ CREATE TABLE AlicuotasImpuesto
         FOREIGN KEY (IdTipoImpuesto)
         REFERENCES TiposImpuesto(IdTipoImpuesto),
 
-    CONSTRAINT FK_AlicuotasImpuesto_Usuarios
+    CONSTRAINT FK_AlicuotasImpuesto_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_AlicuotasImpuesto_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_AlicuotasImpuesto_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE CondicionesIVA
 (
@@ -490,11 +661,14 @@ CREATE TABLE CondicionesIVA
 
     Activo               BIT NOT NULL
         CONSTRAINT DF_CondicionesIVA_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_CondicionesIVA_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_CondicionesIVA
         PRIMARY KEY (IdCondicionIVA),
@@ -502,9 +676,20 @@ CREATE TABLE CondicionesIVA
     CONSTRAINT UQ_CondicionesIVA_Codigo
         UNIQUE (Codigo),
 
-    CONSTRAINT FK_CondicionesIVA_Usuarios
+    CONSTRAINT FK_CondicionesIVA_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_CondicionesIVA_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_CondicionesIVA_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE Provincias
 (
@@ -514,11 +699,14 @@ CREATE TABLE Provincias
     CodigoAFIP           VARCHAR(10) NULL,
     Activo               BIT NOT NULL
         CONSTRAINT DF_Provincias_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_Provincias_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_Provincias
         PRIMARY KEY (IdProvincia),
@@ -526,9 +714,20 @@ CREATE TABLE Provincias
     CONSTRAINT UQ_Provincias_Codigo
         UNIQUE (Codigo),
 
-    CONSTRAINT FK_Provincias_Usuarios
+    CONSTRAINT FK_Provincias_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_Provincias_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_Provincias_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE TiposComprobante
 (
@@ -540,11 +739,14 @@ CREATE TABLE TiposComprobante
 
     Activo               BIT NOT NULL
         CONSTRAINT DF_TiposComprobante_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_TiposComprobante_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_TiposComprobante
         PRIMARY KEY (IdTipoComprobante),
@@ -552,9 +754,20 @@ CREATE TABLE TiposComprobante
     CONSTRAINT UQ_TiposComprobante_Codigo
         UNIQUE (Codigo),
 
-    CONSTRAINT FK_TiposComprobante_Usuarios
+    CONSTRAINT FK_TiposComprobante_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_TiposComprobante_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_TiposComprobante_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE MotivosAnulacion
 (
@@ -564,11 +777,14 @@ CREATE TABLE MotivosAnulacion
 
     Activo               BIT NOT NULL
         CONSTRAINT DF_MotivosAnulacion_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_MotivosAnulacion_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_MotivosAnulacion
         PRIMARY KEY (IdMotivoAnulacion),
@@ -576,9 +792,20 @@ CREATE TABLE MotivosAnulacion
     CONSTRAINT UQ_MotivosAnulacion_Codigo
         UNIQUE (Codigo),
 
-    CONSTRAINT FK_MotivosAnulacion_Usuarios
+    CONSTRAINT FK_MotivosAnulacion_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_MotivosAnulacion_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_MotivosAnulacion_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 /*CREATE TABLE MotivosRechazo
 (
@@ -612,11 +839,14 @@ CREATE TABLE EstadosPedido
 
     Activo               BIT NOT NULL
         CONSTRAINT DF_EstadosPedido_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_EstadosPedido_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_EstadosPedido
         PRIMARY KEY (IdEstadoPedido),
@@ -624,9 +854,20 @@ CREATE TABLE EstadosPedido
     CONSTRAINT UQ_EstadosPedido_Codigo
         UNIQUE (Codigo),
 
-    CONSTRAINT FK_EstadosPedido_Usuarios
+    CONSTRAINT FK_EstadosPedido_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_EstadosPedido_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_EstadosPedido_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE EstadosFactura
 (
@@ -636,11 +877,14 @@ CREATE TABLE EstadosFactura
 
     Activo               BIT NOT NULL
         CONSTRAINT DF_EstadosFactura_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_EstadosFactura_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_EstadosFactura
         PRIMARY KEY (IdEstadoFactura),
@@ -648,9 +892,20 @@ CREATE TABLE EstadosFactura
     CONSTRAINT UQ_EstadosFactura_Codigo
         UNIQUE (Codigo),
 
-    CONSTRAINT FK_EstadosFactura_Usuarios
+    CONSTRAINT FK_EstadosFactura_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_EstadosFactura_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_EstadosFactura_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE EstadosCompra
 (
@@ -660,11 +915,14 @@ CREATE TABLE EstadosCompra
 
     Activo               BIT NOT NULL
         CONSTRAINT DF_EstadosCompra_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_EstadosCompra_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_EstadosCompra
         PRIMARY KEY (IdEstadoCompra),
@@ -672,9 +930,20 @@ CREATE TABLE EstadosCompra
     CONSTRAINT UQ_EstadosCompra_Codigo
         UNIQUE (Codigo),
 
-    CONSTRAINT FK_EstadosCompra_Usuarios
+    CONSTRAINT FK_EstadosCompra_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_EstadosCompra_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_EstadosCompra_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE EstadosProceso
 (
@@ -684,11 +953,14 @@ CREATE TABLE EstadosProceso
 
     Activo               BIT NOT NULL
         CONSTRAINT DF_EstadosProceso_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_EstadosProceso_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_EstadosProceso
         PRIMARY KEY (IdEstadoProceso),
@@ -696,9 +968,20 @@ CREATE TABLE EstadosProceso
     CONSTRAINT UQ_EstadosProceso_Codigo
         UNIQUE (Codigo),
 
-    CONSTRAINT FK_EstadosProceso_Usuarios
+    CONSTRAINT FK_EstadosProceso_UsuariosCreacion
         FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES Usuarios(IdUsuario)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT FK_EstadosProceso_UsuariosModificacion
+        FOREIGN KEY (IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    CONSTRAINT CK_EstadosProceso_FechaBaja
+        CHECK (
+            (Activo = 1 AND FechaBaja IS NULL)
+            OR
+            (Activo = 0 AND FechaBaja IS NOT NULL)
+        )
 );
 CREATE TABLE Monedas
 (
@@ -1017,5 +1300,8 @@ CREATE TABLE MovimientoStockDetalle
     CONSTRAINT CK_MovimientoStockDetalle_Cantidad
         CHECK (Cantidad > 0)
 );
+
+
+
 
 

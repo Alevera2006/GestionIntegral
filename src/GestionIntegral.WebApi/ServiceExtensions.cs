@@ -24,6 +24,29 @@ public static class ServiceExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUsuarioService, UsuarioService>();
         services.AddScoped<ITipoUsuarioService, TipoUsuarioService>();
+        services.AddScoped<ICondicionPagoService, CondicionPagoService>();
+        services.AddScoped<IClienteService, ClienteService>();
+        services.AddScoped<IProveedorService, ProveedorService>();
+        services.AddScoped<ICategoriaService, CategoriaService>();
+        services.AddScoped<ISubCategoriaService, SubCategoriaService>();
+        services.AddScoped<IProductoService, ProductoService>();
+        services.AddScoped<IListaPrecioService, ListaPrecioService>();
+        services.AddScoped<ITipoImpuestoService, TipoImpuestoService>();
+        services.AddScoped<IAlicuotaImpuestoService, AlicuotaImpuestoService>();
+        services.AddScoped<ICondicionIVAService, CondicionIVAService>();
+        services.AddScoped<IProvinciaService, ProvinciaService>();
+        services.AddScoped<ITipoComprobanteService, TipoComprobanteService>();
+        services.AddScoped<IMotivoAnulacionService, MotivoAnulacionService>();
+        services.AddScoped<IEstadoPedidoService, EstadoPedidoService>();
+        services.AddScoped<IEstadoFacturaService, EstadoFacturaService>();
+        services.AddScoped<IEstadoCompraService, EstadoCompraService>();
+        services.AddScoped<IEstadoProcesoService, EstadoProcesoService>();
+        services.AddScoped<IMonedaService, MonedaService>();
+        services.AddScoped<IMedioPagoService, MedioPagoService>();
+        services.AddScoped<ITipoMovimientoCajaService, TipoMovimientoCajaService>();
+        services.AddScoped<IEstadoCajaService, EstadoCajaService>();
+        services.AddScoped<ICajaCabeceraService, CajaCabeceraService>();
+        services.AddScoped<ICajaDetalleService, CajaDetalleService>();
 
         return services;
     }

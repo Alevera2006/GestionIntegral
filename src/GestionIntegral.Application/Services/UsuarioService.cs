@@ -90,9 +90,30 @@ public class UsuarioService : IUsuarioService
         usuario.IdUsuarioUltimaModificacion = userId;
         usuario.FechaUltimaModificacion = DateTime.UtcNow;
 
-        await _unitOfWork.Usuarios.UpdateAsync(usuario, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return BaseResponseDto<UsuarioResponseDto>.Ok(_mapper.Map<UsuarioResponseDto>(usuario), "Usuario actualizado correctamente.");
+    }
+
+    public async Task<BaseResponseDto<bool>> EliminarAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var usuario = await _unitOfWork.Usuarios.GetByIdAsync(id, cancellationToken);
+        if (usuario is null)
+            throw new NotFoundException(nameof(Usuario), id);
+
+        if (!usuario.Activo)
+            throw new BusinessException("El usuario ya se encuentra dado de baja.");
+
+        var userId = _currentUserService.UserId ?? 1;
+
+        usuario.Activo = false;
+        usuario.FechaBaja = DateTime.UtcNow;
+        usuario.IdUsuarioUltimaModificacion = userId;
+        usuario.FechaUltimaModificacion = DateTime.UtcNow;
+
+        await _unitOfWork.Usuarios.UpdateAsync(usuario, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return BaseResponseDto<bool>.Ok(true, "Usuario dado de baja correctamente.");
     }
 }

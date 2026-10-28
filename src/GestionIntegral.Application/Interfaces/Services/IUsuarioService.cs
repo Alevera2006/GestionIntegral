@@ -9,4 +9,5 @@ public interface IUsuarioService
     Task<BaseResponseDto<UsuarioResponseDto>> ObtenerPorIdAsync(int id, CancellationToken cancellationToken = default);
     Task<BaseResponseDto<UsuarioResponseDto>> CrearAsync(CrearUsuarioRequestDto request, CancellationToken cancellationToken = default);
     Task<BaseResponseDto<UsuarioResponseDto>> ActualizarAsync(ActualizarUsuarioRequestDto request, CancellationToken cancellationToken = default);
+    Task<BaseResponseDto<bool>> EliminarAsync(int id, CancellationToken cancellationToken = default);
 }

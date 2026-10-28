@@ -37,6 +37,15 @@ public class TipoUsuarioConfiguration : IEntityTypeConfiguration<TipoUsuario>
             .HasColumnName("FechaUltimaModificacion")
             .HasColumnType("datetime2(3)");
 
+        builder.Property(e => e.Activo)
+            .HasColumnName("Activo")
+            .HasDefaultValue(true)
+            .IsRequired();
+
+        builder.Property(e => e.FechaBaja)
+            .HasColumnName("FechaBaja")
+            .HasColumnType("datetime2(3)");
+
         builder.HasIndex(e => e.Descripcion)
             .IsUnique()
             .HasDatabaseName("UQ_TiposUsuario_Descripcion");

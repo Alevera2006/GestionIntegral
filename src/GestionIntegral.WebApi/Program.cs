@@ -12,11 +12,6 @@ builder.Configuration
     .AddJsonFile("config/connectionStrings.json", optional: false, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-Console.Write("New SuperAdmin password: ");
-string password = Console.ReadLine()
-    ?? throw new InvalidOperationException("Password is required.");
-
-Console.WriteLine(BCrypt.Net.BCrypt.HashPassword(password));
 
 // Add services to the container.
 builder.Services.AddControllers();

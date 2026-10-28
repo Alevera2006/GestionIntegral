@@ -4,6 +4,8 @@ public class TipoUsuario : EntityBase
 {
     public int IdTipoUsuario { get; set; }
     public string Descripcion { get; set; } = string.Empty;
+    public bool Activo { get; set; } = true;
+    public DateTime? FechaBaja { get; set; }
 
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
     public virtual Usuario UsuarioCreacion { get; set; } = null!;

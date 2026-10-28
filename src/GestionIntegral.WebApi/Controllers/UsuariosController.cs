@@ -42,4 +42,11 @@ public class UsuariosController : BaseController
         var response = await _usuarioService.ActualizarAsync(request, cancellationToken);
         return Result(response);
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        var response = await _usuarioService.EliminarAsync(id, cancellationToken);
+        return Result(response);
+    }
 }
