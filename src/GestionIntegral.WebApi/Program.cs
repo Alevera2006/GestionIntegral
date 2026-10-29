@@ -28,10 +28,16 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.DocumentTitle = "GestionIntegral API";
+        options.InjectStylesheet("/swagger/custom-swagger.css");
+        options.InjectJavascript("/swagger/custom-swagger.js");
+    });
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();

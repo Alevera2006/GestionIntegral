@@ -1,0 +1,35 @@
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-item">
+                <a asp-controller="Home" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                    <i class="nav-icon fas fa-home"></i>
+                    <p>Inicio</p>
+                </a>
+            </li>
+
+            <li class="nav-header">CONFIGURACIÓN</li>
+            <li class="nav-item">
+                <a asp-controller="Parametros" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Parametros" ? "active" : "")">
+                    <i class="nav-icon fas fa-sliders-h"></i>
+                    <p>Parámetros</p>
+                </a>
+            </li>
+
+            <li class="nav-header">SEGURIDAD</li>
+            <li class="nav-item">
+                <a asp-controller="Usuarios" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Usuarios" ? "active" : "")">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Usuarios</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="TiposUsuario" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TiposUsuario" ? "active" : "")">
+                    <i class="nav-icon fas fa-user-tag"></i>
+                    <p>Tipos de Usuario</p>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "Tipos de Usuario";
+}
+
+<partial name="_Alerts" />
+
+<div class="row justify-content-center">
+    <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
+        <div class="card tarjeta-crud h-100 shadow-sm" data-controller="TiposUsuario" data-title="Tipos de Usuario" data-color="bg-success" data-icon="fa-user-tag">
+            <div class="card-header bg-success text-white">
+                <h3 class="card-title"><i class="fas fa-user-tag mr-2"></i> Tipos de Usuario</h3>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <p class="text-muted flex-grow-1">Administre los tipos de usuario del sistema.</p>
+                <button type="button" class="btn btn-outline-primary btn-block btn-administrar">
+                    <i class="fas fa-cog mr-1"></i> Administrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de administración de tipos de usuario -->
+<div class="modal fade" id="tipoUsuarioModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success">
+                <h5 class="modal-title">Administrar Tipos de Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="tipoUsuarioForm" autocomplete="off">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="tipoUsuarioId" />
+
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <label for="tipoUsuarioDescripcion">Descripción</label>
+                            <input type="text" id="tipoUsuarioDescripcion" class="form-control" maxlength="50" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group text-right mb-0">
+                        <button type="button" id="btnNuevoTipoUsuario" class="btn btn-secondary"><i class="fas fa-plus mr-1"></i> Nuevo</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i> Guardar</button>
+                    </div>
+                </form>
+
+                <hr />
+
+                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                    <table class="table table-sm table-striped table-hover mb-0" id="tipoUsuarioTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Descripción</th>
+                                <th class="table-actions">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/views/tiposusuario.index.js" asp-append-version="true"></script>
+}

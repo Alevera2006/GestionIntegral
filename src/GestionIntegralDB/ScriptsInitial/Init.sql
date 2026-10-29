@@ -198,10 +198,10 @@ BEGIN TRY
             ClaveHash
         )
         VALUES (
-            N'Super',
-            N'Admin',
+            N'Alejandro',
+            N'Vera',
             @IdTipoAdmin,
-            N'SuperAdmin',
+            N'alevera01',
             @SuperAdminClaveHash
         );
 
@@ -274,7 +274,7 @@ BEGIN TRY
         u.FechaCreacion
     FROM dbo.Usuarios u
     INNER JOIN dbo.TiposUsuario tu ON u.IdTipoUsuario = tu.IdTipoUsuario
-    WHERE u.Usuario = N'SuperAdmin';
+    WHERE u.Usuario = N'alevera01';
 
 END TRY
 BEGIN CATCH

@@ -1,0 +1,25 @@
+@if (TempData["Success"] != null)
+{
+    <script>
+        $(document).ready(function () {
+            ModalHelper.notify({
+                type: 'success',
+                title: 'Éxito',
+                message: JSON.parse('@Html.Raw(Json.Serialize(TempData["Success"]))')
+            });
+        });
+    </script>
+}
+
+@if (TempData["Error"] != null)
+{
+    <script>
+        $(document).ready(function () {
+            ModalHelper.notify({
+                type: 'error',
+                title: 'Error',
+                message: JSON.parse('@Html.Raw(Json.Serialize(TempData["Error"]))')
+            });
+        });
+    </script>
+}

@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="row">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>Usuarios</h3>
+                <p>Administración de usuarios</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <a asp-controller="Usuarios" asp-action="Index" class="small-box-footer">Ir <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>Tipos</h3>
+                <p>Tipos de usuario</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-tag"></i>
+            </div>
+            <a asp-controller="TiposUsuario" asp-action="Index" class="small-box-footer">Ir <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+.topbar-wrapper > svg {
+    display: none !important;
+}
+
+.topbar-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 1460px;
+    margin: 0 auto;
+    padding: 10px 0;
+}
+
+.topbar-wrapper img.swagger-logo {
+    height: 40px;
+    margin-right: 12px;
+}
+
+.topbar-wrapper .swagger-title {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.topbar {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+    padding: 0 20px !important;
+}

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using GestionIntegral.Application.DTOs.Provincias;
 using GestionIntegral.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -44,7 +45,7 @@ public class ProvinciasController : BaseController
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete([Range(1, int.MaxValue)] int id, CancellationToken cancellationToken)
     {
         var response = await _provinciaService.EliminarAsync(id, cancellationToken);
         return Result(response);

@@ -26,4 +26,13 @@
     </Content>
   </ItemGroup>
 
+  <!-- Copiar imágenes fuente a wwwroot/images en cada build -->
+  <ItemGroup>
+    <ImageFiles Include="Images\**\*" />
+  </ItemGroup>
+
+  <Target Name="CopyImagesToWwwroot" BeforeTargets="BeforeBuild">
+    <Copy SourceFiles="@(ImageFiles)" DestinationFiles="@(ImageFiles->'wwwroot\images\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+
 </Project>
