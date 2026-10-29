@@ -28,6 +28,13 @@ public interface IUnitOfWork : IDisposable
     IEstadoCajaRepository EstadosCaja { get; }
     ICajaCabeceraRepository CajasCabecera { get; }
     ICajaDetalleRepository CajasDetalle { get; }
+    IDepositoRepository Depositos { get; }
+    ITipoMovimientoStockRepository TiposMovimientoStock { get; }
+    IStockRepository Stock { get; }
+    IMovimientoStockRepository MovimientosStock { get; }
+    IMovimientoStockDetalleRepository MovimientoStockDetalle { get; }
+    IContactoRepository Contactos { get; }
+    IClienteContactoRepository ClienteContactos { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

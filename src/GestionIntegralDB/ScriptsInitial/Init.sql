@@ -34,13 +34,61 @@ IF OBJECT_ID('dbo.Contactos', 'U') IS NOT NULL DROP TABLE dbo.Contactos;
 IF OBJECT_ID('dbo.Proveedores', 'U') IS NOT NULL DROP TABLE dbo.Proveedores;
 IF OBJECT_ID('dbo.Clientes', 'U') IS NOT NULL DROP TABLE dbo.Clientes;
 IF OBJECT_ID('dbo.CondicionesPago', 'U') IS NOT NULL DROP TABLE dbo.CondicionesPago;
-IF OBJECT_ID('dbo.Usuarios', 'U') IS NOT NULL DROP TABLE dbo.Usuarios;
-IF OBJECT_ID('dbo.TiposUsuario', 'U') IS NOT NULL DROP TABLE dbo.TiposUsuario;
+
+-- Script para borrar UNICAMENTE las tablas Usuarios y TiposUsuario.
+-- Primero elimina todas las FKs de otras tablas (y de estas mismas) que las referencian.
+-- El resto de las tablas permanecen intactas, aunque sus columnas de auditoria
+-- quedaran sin referencia hasta que se vuelva a ejecutar Init.sql.
+
+BEGIN TRY
+    BEGIN TRANSACTION;
+
+    DECLARE @Sql NVARCHAR(MAX) = N'';
+
+    -- 1. Eliminar todas las FKs que referencian a Usuarios
+    SELECT @Sql += N'ALTER TABLE ' + QUOTENAME(OBJECT_SCHEMA_NAME(parent_object_id))
+                + N'.' + QUOTENAME(OBJECT_NAME(parent_object_id))
+                + N' DROP CONSTRAINT ' + QUOTENAME(name) + N';' + CHAR(13)
+    FROM sys.foreign_keys
+    WHERE referenced_object_id = OBJECT_ID('dbo.Usuarios');
+
+    -- 2. Eliminar todas las FKs que referencian a TiposUsuario
+    SELECT @Sql += N'ALTER TABLE ' + QUOTENAME(OBJECT_SCHEMA_NAME(parent_object_id))
+                + N'.' + QUOTENAME(OBJECT_NAME(parent_object_id))
+                + N' DROP CONSTRAINT ' + QUOTENAME(name) + N';' + CHAR(13)
+    FROM sys.foreign_keys
+    WHERE referenced_object_id = OBJECT_ID('dbo.TiposUsuario');
+
+    IF LEN(@Sql) > 0
+        EXEC sp_executesql @Sql;
+
+    -- 3. Borrar las tablas
+    IF OBJECT_ID('dbo.Usuarios', 'U') IS NOT NULL
+        DROP TABLE dbo.Usuarios;
+
+    IF OBJECT_ID('dbo.TiposUsuario', 'U') IS NOT NULL
+        DROP TABLE dbo.TiposUsuario;
+
+    COMMIT TRANSACTION;
+
+    PRINT 'Tablas Usuarios y TiposUsuario eliminadas correctamente.';
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+        ROLLBACK TRANSACTION;
+
+    THROW;
+END CATCH;
+
+
 GO
 
--- Run in SQLCMD mode with -v SuperAdminClaveHash=<BCrypt hash generated outside SQL>.
--- Do not put a plaintext password in ClaveHash.
-DECLARE @SuperAdminClaveHash NVARCHAR(500) = N'$(SuperAdminClaveHash)';
+SET XACT_ABORT ON;
+USE GestionIntegralDB;
+GO
+
+DECLARE @SuperAdminClaveHash NVARCHAR(500) = N'$2a$11$gk/lE5669hXTdIvf3SGj5OFgxu773hnnt4ub/XOUrqXuKDbFtbds.';
+
 IF LEN(@SuperAdminClaveHash) <> 60
    OR LEFT(@SuperAdminClaveHash, 4) NOT IN (N'$2a$', N'$2b$', N'$2y$')
     THROW 50001, 'SuperAdminClaveHash must be a BCrypt hash.', 1;
@@ -49,140 +97,184 @@ GO
 BEGIN TRY
     BEGIN TRANSACTION;
 
-    CREATE TABLE dbo.TiposUsuario (
-        IdTipoUsuario INT IDENTITY(1,1) NOT NULL,
-        Descripcion NVARCHAR(100) NOT NULL,
-        Activo BIT NOT NULL
-            CONSTRAINT DF_TiposUsuario_Activo
-            DEFAULT (1),
-        FechaBaja DATETIME2(3) NULL,
-        IdUsuarioCreacion INT NOT NULL,
-        FechaCreacion DATETIME2(3) NOT NULL
-            CONSTRAINT DF_TiposUsuario_FechaCreacion
-            DEFAULT (SYSUTCDATETIME()),
-        IdUsuarioUltimaModificacion INT NULL,
-        FechaUltimaModificacion DATETIME2(3) NULL,
+    IF OBJECT_ID('dbo.TiposUsuario', 'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.TiposUsuario (
+            IdTipoUsuario INT IDENTITY(1,1) NOT NULL,
+            Descripcion NVARCHAR(100) NOT NULL,
+            Activo BIT NOT NULL
+                CONSTRAINT DF_TiposUsuario_Activo
+                DEFAULT (1),
+            FechaBaja DATETIME2(3) NULL,
+            IdUsuarioCreacion INT NOT NULL,
+            FechaCreacion DATETIME2(3) NOT NULL
+                CONSTRAINT DF_TiposUsuario_FechaCreacion
+                DEFAULT (SYSUTCDATETIME()),
+            IdUsuarioUltimaModificacion INT NULL,
+            FechaUltimaModificacion DATETIME2(3) NULL,
 
-        CONSTRAINT PK_TiposUsuario
-            PRIMARY KEY (IdTipoUsuario),
+            CONSTRAINT PK_TiposUsuario
+                PRIMARY KEY (IdTipoUsuario),
 
-        CONSTRAINT UQ_TiposUsuario_Descripcion
-            UNIQUE (Descripcion)
-    );
+            CONSTRAINT UQ_TiposUsuario_Descripcion
+                UNIQUE (Descripcion)
+        );
+    END
 
-    CREATE TABLE dbo.Usuarios (
-        IdUsuario INT IDENTITY(1,1) NOT NULL,
-        Nombre NVARCHAR(100) NOT NULL,
-        Apellido NVARCHAR(100) NOT NULL,
-        IdTipoUsuario INT NOT NULL,
-        Usuario NVARCHAR(100) NOT NULL,
-        ClaveHash NVARCHAR(500) NOT NULL,
+    IF OBJECT_ID('dbo.Usuarios', 'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.Usuarios (
+            IdUsuario INT IDENTITY(1,1) NOT NULL,
+            Nombre NVARCHAR(100) NOT NULL,
+            Apellido NVARCHAR(100) NOT NULL,
+            IdTipoUsuario INT NOT NULL,
+            Usuario NVARCHAR(100) NOT NULL,
+            ClaveHash NVARCHAR(500) NOT NULL,
 
-        Bloqueado BIT NOT NULL
-            CONSTRAINT DF_Usuarios_Bloqueado
-            DEFAULT (0),
+            Bloqueado BIT NOT NULL
+                CONSTRAINT DF_Usuarios_Bloqueado
+                DEFAULT (0),
 
-        Activo BIT NOT NULL
-            CONSTRAINT DF_Usuarios_Activo
-            DEFAULT (1),
+            Activo BIT NOT NULL
+                CONSTRAINT DF_Usuarios_Activo
+                DEFAULT (1),
 
-        IdUsuarioCreacion INT NULL,
+            IdUsuarioCreacion INT NULL,
 
-        FechaCreacion DATETIME2(3) NOT NULL
-            CONSTRAINT DF_Usuarios_FechaCreacion
-            DEFAULT (SYSUTCDATETIME()),
+            FechaCreacion DATETIME2(3) NOT NULL
+                CONSTRAINT DF_Usuarios_FechaCreacion
+                DEFAULT (SYSUTCDATETIME()),
 
-        IdUsuarioUltimaModificacion INT NULL,
-        FechaUltimaModificacion DATETIME2(3) NULL,
-        FechaBaja DATETIME2(3) NULL,
+            IdUsuarioUltimaModificacion INT NULL,
+            FechaUltimaModificacion DATETIME2(3) NULL,
+            FechaBaja DATETIME2(3) NULL,
 
-        CONSTRAINT PK_Usuarios
-            PRIMARY KEY (IdUsuario),
+            CONSTRAINT PK_Usuarios
+                PRIMARY KEY (IdUsuario),
 
-        CONSTRAINT UQ_Usuarios_Usuario
-            UNIQUE (Usuario),
+            CONSTRAINT UQ_Usuarios_Usuario
+                UNIQUE (Usuario),
 
-        CONSTRAINT FK_Usuarios_TiposUsuario
-            FOREIGN KEY (IdTipoUsuario)
-            REFERENCES dbo.TiposUsuario(IdTipoUsuario),
+            CONSTRAINT FK_Usuarios_TiposUsuario
+                FOREIGN KEY (IdTipoUsuario)
+                REFERENCES dbo.TiposUsuario(IdTipoUsuario),
 
-        CONSTRAINT CK_Usuarios_FechaBaja
-            CHECK (
-                (Activo = 1 AND FechaBaja IS NULL)
-                OR
-                (Activo = 0 AND FechaBaja IS NOT NULL)
-            )
-    );
+            CONSTRAINT CK_Usuarios_FechaBaja
+                CHECK (
+                    (Activo = 1 AND FechaBaja IS NULL)
+                    OR
+                    (Activo = 0 AND FechaBaja IS NOT NULL)
+                )
+        );
+    END
 
-    INSERT INTO dbo.TiposUsuario
-        (Descripcion, IdUsuarioCreacion)
-    VALUES
-        (N'SuperAdministrador', 0);
+    DECLARE @SuperAdminClaveHash NVARCHAR(500) = N'$2a$11$gk/lE5669hXTdIvf3SGj5OFgxu773hnnt4ub/XOUrqXuKDbFtbds.';
+    DECLARE @IdTipoAdmin INT;
+    DECLARE @IdSuperAdmin INT;
 
-    DECLARE @IdTipoAdmin INT =
-        CONVERT(INT, SCOPE_IDENTITY());
+    IF NOT EXISTS (SELECT 1 FROM dbo.TiposUsuario WHERE Descripcion = N'SuperAdministrador')
+    BEGIN
+        INSERT INTO dbo.TiposUsuario
+            (Descripcion, IdUsuarioCreacion)
+        VALUES
+            (N'SuperAdministrador', 0);
 
-    INSERT INTO dbo.Usuarios (
-        Nombre,
-        Apellido,
-        IdTipoUsuario,
-        Usuario,
-        ClaveHash
-    )
-    VALUES (
-        N'Super',
-        N'Admin',
-        @IdTipoAdmin,
-        N'SuperAdmin',
-        N'$(SuperAdminClaveHash)'
-    );
+        SET @IdTipoAdmin = CONVERT(INT, SCOPE_IDENTITY());
+    END
+    ELSE
+    BEGIN
+        SELECT @IdTipoAdmin = IdTipoUsuario
+        FROM dbo.TiposUsuario
+        WHERE Descripcion = N'SuperAdministrador';
+    END
 
-    DECLARE @IdSuperAdmin INT =
-        CONVERT(INT, SCOPE_IDENTITY());
+    IF NOT EXISTS (SELECT 1 FROM dbo.Usuarios WHERE Usuario = N'SuperAdmin')
+    BEGIN
+        INSERT INTO dbo.Usuarios (
+            Nombre,
+            Apellido,
+            IdTipoUsuario,
+            Usuario,
+            ClaveHash
+        )
+        VALUES (
+            N'Super',
+            N'Admin',
+            @IdTipoAdmin,
+            N'SuperAdmin',
+            @SuperAdminClaveHash
+        );
 
-    UPDATE dbo.Usuarios
-    SET IdUsuarioCreacion = @IdSuperAdmin
-    WHERE IdUsuario = @IdSuperAdmin;
+        SET @IdSuperAdmin = CONVERT(INT, SCOPE_IDENTITY());
 
-    UPDATE dbo.TiposUsuario
-    SET IdUsuarioCreacion = @IdSuperAdmin
-    WHERE IdTipoUsuario = @IdTipoAdmin;
+        UPDATE dbo.Usuarios
+        SET IdUsuarioCreacion = @IdSuperAdmin
+        WHERE IdUsuario = @IdSuperAdmin;
 
-    ALTER TABLE dbo.Usuarios
-    ALTER COLUMN IdUsuarioCreacion INT NOT NULL;
+        UPDATE dbo.TiposUsuario
+        SET IdUsuarioCreacion = @IdSuperAdmin
+        WHERE IdTipoUsuario = @IdTipoAdmin;
+    END
+    ELSE
+    BEGIN
+        UPDATE dbo.Usuarios
+        SET ClaveHash = @SuperAdminClaveHash,
+            Activo = 1,
+            Bloqueado = 0,
+            FechaBaja = NULL
+        WHERE Usuario = N'SuperAdmin';
+    END
 
-    ALTER TABLE dbo.Usuarios
-    ADD CONSTRAINT FK_Usuarios_UsuarioCreacion
-        FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES dbo.Usuarios(IdUsuario);
+    IF OBJECT_ID('dbo.FK_Usuarios_UsuarioCreacion', 'F') IS NULL
+    BEGIN
+        ALTER TABLE dbo.Usuarios
+        ALTER COLUMN IdUsuarioCreacion INT NOT NULL;
 
-    ALTER TABLE dbo.Usuarios
-    ADD CONSTRAINT FK_Usuarios_UsuarioModificacion
-        FOREIGN KEY (IdUsuarioUltimaModificacion)
-        REFERENCES dbo.Usuarios(IdUsuario);
+        ALTER TABLE dbo.Usuarios
+        ADD CONSTRAINT FK_Usuarios_UsuarioCreacion
+            FOREIGN KEY (IdUsuarioCreacion)
+            REFERENCES dbo.Usuarios(IdUsuario);
+    END
 
-    ALTER TABLE dbo.TiposUsuario
-    ADD CONSTRAINT FK_TiposUsuario_UsuarioCreacion
-        FOREIGN KEY (IdUsuarioCreacion)
-        REFERENCES dbo.Usuarios(IdUsuario);
+    IF OBJECT_ID('dbo.FK_Usuarios_UsuarioModificacion', 'F') IS NULL
+    BEGIN
+        ALTER TABLE dbo.Usuarios
+        ADD CONSTRAINT FK_Usuarios_UsuarioModificacion
+            FOREIGN KEY (IdUsuarioUltimaModificacion)
+            REFERENCES dbo.Usuarios(IdUsuario);
+    END
 
-    ALTER TABLE dbo.TiposUsuario
-    ADD CONSTRAINT FK_TiposUsuario_UsuarioModificacion
-        FOREIGN KEY (IdUsuarioUltimaModificacion)
-        REFERENCES dbo.Usuarios(IdUsuario);
+    IF OBJECT_ID('dbo.FK_TiposUsuario_UsuarioCreacion', 'F') IS NULL
+    BEGIN
+        ALTER TABLE dbo.TiposUsuario
+        ADD CONSTRAINT FK_TiposUsuario_UsuarioCreacion
+            FOREIGN KEY (IdUsuarioCreacion)
+            REFERENCES dbo.Usuarios(IdUsuario);
+    END
+
+    IF OBJECT_ID('dbo.FK_TiposUsuario_UsuarioModificacion', 'F') IS NULL
+    BEGIN
+        ALTER TABLE dbo.TiposUsuario
+        ADD CONSTRAINT FK_TiposUsuario_UsuarioModificacion
+            FOREIGN KEY (IdUsuarioUltimaModificacion)
+            REFERENCES dbo.Usuarios(IdUsuario);
+    END
 
     COMMIT TRANSACTION;
 
     SELECT
-        IdUsuario,
-        Usuario,
-        IdTipoUsuario,
-        Activo,
-        Bloqueado,
-        IdUsuarioCreacion,
-        FechaCreacion
-    FROM dbo.Usuarios
-    WHERE IdUsuario = @IdSuperAdmin;
+        u.IdUsuario,
+        u.ClaveHash,
+        u.Usuario,
+        u.IdTipoUsuario,
+        tu.Descripcion AS TipoUsuarioDescripcion,
+        u.Activo,
+        u.Bloqueado,
+        u.IdUsuarioCreacion,
+        u.FechaCreacion
+    FROM dbo.Usuarios u
+    INNER JOIN dbo.TiposUsuario tu ON u.IdTipoUsuario = tu.IdTipoUsuario
+    WHERE u.Usuario = N'SuperAdmin';
 
 END TRY
 BEGIN CATCH
@@ -191,6 +283,7 @@ BEGIN CATCH
 
     THROW;
 END CATCH;
+
 CREATE TABLE CondicionesPago
 (
     IdCondicionPago      INT IDENTITY(1,1) NOT NULL,
@@ -1303,5 +1396,33 @@ CREATE TABLE MovimientoStockDetalle
 
 
 
+INSERT INTO dbo.Provincias (Codigo, Descripcion, IdUsuarioCreacion)
+VALUES
+    ('BA',   'BUENOS AIRES', 1),
+    ('CABA', 'CIUDAD AUTÓNOMA DE BUENOS AIRES', 1),
+    ('CAT',  'CATAMARCA', 1),
+    ('CHA',  'CHACO', 1),
+    ('CHU',  'CHUBUT', 1),
+    ('CBA',  'CÓRDOBA', 1),
+    ('CTES', 'CORRIENTES', 1),
+    ('ER',   'ENTRE RÍOS', 1),
+    ('FOR',  'FORMOSA', 1),
+    ('JUJ',  'JUJUY', 1),
+    ('LP',   'LA PAMPA', 1),
+    ('LR',   'LA RIOJA', 1),
+    ('MZA',  'MENDOZA', 1),
+    ('MIS',  'MISIONES', 1),
+    ('NEU',  'NEUQUÉN', 1),
+    ('RN',   'RÍO NEGRO', 1),
+    ('SAL',  'SALTA', 1),
+    ('SJ',   'SAN JUAN', 1),
+    ('SL',   'SAN LUIS', 1),
+    ('SC',   'SANTA CRUZ', 1),
+    ('SF',   'SANTA FE', 1),
+    ('SDE',  'SANTIAGO DEL ESTERO', 1),
+    ('TDF',  'TIERRA DEL FUEGO', 1),
+    ('TUC',  'TUCUMÁN', 1);
 
 
+
+    SELECT * FROM DBO.Provincias

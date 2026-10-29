@@ -2,11 +2,17 @@ using AutoMapper;
 using GestionIntegral.Application.DTOs.AlicuotasImpuesto;
 using GestionIntegral.Application.DTOs.Cajas;
 using GestionIntegral.Application.DTOs.Categorias;
+using GestionIntegral.Application.DTOs.ClienteContactos;
 using GestionIntegral.Application.DTOs.CondicionesIVA;
+using GestionIntegral.Application.DTOs.Contactos;
+using GestionIntegral.Application.DTOs.Depositos;
 using GestionIntegral.Application.DTOs.EstadosCaja;
 using GestionIntegral.Application.DTOs.MediosPago;
 using GestionIntegral.Application.DTOs.Monedas;
+using GestionIntegral.Application.DTOs.MovimientosStock;
+using GestionIntegral.Application.DTOs.Stock;
 using GestionIntegral.Application.DTOs.TiposMovimientoCaja;
+using GestionIntegral.Application.DTOs.TiposMovimientoStock;
 using GestionIntegral.Application.DTOs.CondicionesPago;
 using GestionIntegral.Application.DTOs.Clientes;
 using GestionIntegral.Application.DTOs.EstadosCompra;
@@ -102,5 +108,38 @@ public class MappingProfile : Profile
                        opt => opt.MapFrom(src => src.MedioPago != null ? src.MedioPago.Descripcion : null))
             .ForMember(dest => dest.MonedaCodigo,
                        opt => opt.MapFrom(src => src.Moneda != null ? src.Moneda.Codigo : null));
+
+        CreateMap<Deposito, DepositoResponseDto>();
+        CreateMap<TipoMovimientoStock, TipoMovimientoStockResponseDto>();
+
+        CreateMap<Stock, StockResponseDto>()
+            .ForMember(dest => dest.DepositoDescripcion,
+                       opt => opt.MapFrom(src => src.Deposito.Descripcion))
+            .ForMember(dest => dest.ProductoCodigo,
+                       opt => opt.MapFrom(src => src.Producto.Codigo))
+            .ForMember(dest => dest.ProductoDescripcion,
+                       opt => opt.MapFrom(src => src.Producto.Descripcion));
+
+        CreateMap<MovimientoStock, MovimientoStockResponseDto>()
+            .ForMember(dest => dest.DepositoDescripcion,
+                       opt => opt.MapFrom(src => src.Deposito.Descripcion))
+            .ForMember(dest => dest.TipoMovimientoStockDescripcion,
+                       opt => opt.MapFrom(src => src.TipoMovimientoStock.Descripcion))
+            .ForMember(dest => dest.NombreUsuarioResponsable,
+                       opt => opt.MapFrom(src => $"{src.UsuarioResponsable.Nombre} {src.UsuarioResponsable.Apellido}"));
+
+        CreateMap<MovimientoStockDetalle, MovimientoStockDetalleResponseDto>()
+            .ForMember(dest => dest.ProductoCodigo,
+                       opt => opt.MapFrom(src => src.Producto.Codigo))
+            .ForMember(dest => dest.ProductoDescripcion,
+                       opt => opt.MapFrom(src => src.Producto.Descripcion));
+
+        CreateMap<Contacto, ContactoResponseDto>();
+
+        CreateMap<ClienteContacto, ClienteContactoResponseDto>()
+            .ForMember(dest => dest.ClienteRazonSocial,
+                       opt => opt.MapFrom(src => src.Cliente.RazonSocial))
+            .ForMember(dest => dest.ContactoNombre,
+                       opt => opt.MapFrom(src => $"{src.Contacto.Nombre} {src.Contacto.Apellido}"));
     }
 }

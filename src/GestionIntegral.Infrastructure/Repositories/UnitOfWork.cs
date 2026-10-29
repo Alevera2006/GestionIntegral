@@ -33,6 +33,13 @@ public class UnitOfWork : IUnitOfWork
     public IEstadoCajaRepository EstadosCaja { get; }
     public ICajaCabeceraRepository CajasCabecera { get; }
     public ICajaDetalleRepository CajasDetalle { get; }
+    public IDepositoRepository Depositos { get; }
+    public ITipoMovimientoStockRepository TiposMovimientoStock { get; }
+    public IStockRepository Stock { get; }
+    public IMovimientoStockRepository MovimientosStock { get; }
+    public IMovimientoStockDetalleRepository MovimientoStockDetalle { get; }
+    public IContactoRepository Contactos { get; }
+    public IClienteContactoRepository ClienteContactos { get; }
 
     public UnitOfWork(GestionIntegralDbContext context)
     {
@@ -63,6 +70,13 @@ public class UnitOfWork : IUnitOfWork
         EstadosCaja = new EstadoCajaRepository(context);
         CajasCabecera = new CajaCabeceraRepository(context);
         CajasDetalle = new CajaDetalleRepository(context);
+        Depositos = new DepositoRepository(context);
+        TiposMovimientoStock = new TipoMovimientoStockRepository(context);
+        Stock = new StockRepository(context);
+        MovimientosStock = new MovimientoStockRepository(context);
+        MovimientoStockDetalle = new MovimientoStockDetalleRepository(context);
+        Contactos = new ContactoRepository(context);
+        ClienteContactos = new ClienteContactoRepository(context);
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

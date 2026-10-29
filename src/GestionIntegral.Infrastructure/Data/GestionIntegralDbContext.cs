@@ -33,6 +33,13 @@ public class GestionIntegralDbContext : DbContext
     public DbSet<EstadoCaja> EstadosCaja => Set<EstadoCaja>();
     public DbSet<CajaCabecera> CajasCabecera => Set<CajaCabecera>();
     public DbSet<CajaDetalle> CajasDetalle => Set<CajaDetalle>();
+    public DbSet<Deposito> Depositos => Set<Deposito>();
+    public DbSet<TipoMovimientoStock> TiposMovimientoStock => Set<TipoMovimientoStock>();
+    public DbSet<Stock> Stock => Set<Stock>();
+    public DbSet<MovimientoStock> MovimientosStock => Set<MovimientoStock>();
+    public DbSet<MovimientoStockDetalle> MovimientoStockDetalle => Set<MovimientoStockDetalle>();
+    public DbSet<Contacto> Contactos => Set<Contacto>();
+    public DbSet<ClienteContacto> ClienteContactos => Set<ClienteContacto>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

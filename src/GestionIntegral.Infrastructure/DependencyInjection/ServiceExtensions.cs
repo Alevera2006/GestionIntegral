@@ -50,6 +50,13 @@ public static class ServiceExtensions
         services.AddScoped<IEstadoCajaRepository, EstadoCajaRepository>();
         services.AddScoped<ICajaCabeceraRepository, CajaCabeceraRepository>();
         services.AddScoped<ICajaDetalleRepository, CajaDetalleRepository>();
+        services.AddScoped<IDepositoRepository, DepositoRepository>();
+        services.AddScoped<ITipoMovimientoStockRepository, TipoMovimientoStockRepository>();
+        services.AddScoped<IStockRepository, StockRepository>();
+        services.AddScoped<IMovimientoStockRepository, MovimientoStockRepository>();
+        services.AddScoped<IMovimientoStockDetalleRepository, MovimientoStockDetalleRepository>();
+        services.AddScoped<IContactoRepository, ContactoRepository>();
+        services.AddScoped<IClienteContactoRepository, ClienteContactoRepository>();
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPasswordService, PasswordService>();

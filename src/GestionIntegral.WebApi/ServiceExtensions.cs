@@ -47,6 +47,13 @@ public static class ServiceExtensions
         services.AddScoped<IEstadoCajaService, EstadoCajaService>();
         services.AddScoped<ICajaCabeceraService, CajaCabeceraService>();
         services.AddScoped<ICajaDetalleService, CajaDetalleService>();
+        services.AddScoped<IDepositoService, DepositoService>();
+        services.AddScoped<ITipoMovimientoStockService, TipoMovimientoStockService>();
+        services.AddScoped<IStockService, StockService>();
+        services.AddScoped<IMovimientoStockService, MovimientoStockService>();
+        services.AddScoped<IMovimientoStockDetalleService, MovimientoStockDetalleService>();
+        services.AddScoped<IContactoService, ContactoService>();
+        services.AddScoped<IClienteContactoService, ClienteContactoService>();
 
         return services;
     }
