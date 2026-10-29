@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Seguridad";
+}
+
+<partial name="_Alerts" />
+
+<div class="row">
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="small-box">
+            <div class="inner">
+                <h3>Usuarios</h3>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <a asp-controller="Usuarios" asp-action="Index" class="small-box-footer">
+                Administrar <i class="fas fa-arrow-circle-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="small-box">
+            <div class="inner">
+                <h3>Tipos de Usuario</h3>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-tag"></i>
+            </div>
+            <a asp-controller="TiposUsuario" asp-action="Index" class="small-box-footer">
+                Administrar <i class="fas fa-arrow-circle-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+</div>

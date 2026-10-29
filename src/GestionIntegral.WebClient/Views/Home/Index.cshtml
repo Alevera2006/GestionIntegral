@@ -1,31 +1,96 @@
-﻿@{
+﻿@model GestionIntegral.WebClient.Models.Home.DashboardViewModel
+@{
     ViewData["Title"] = "Inicio";
 }
 
+<!-- Bienvenida -->
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron jumbotron-fluid bg-white p-4 rounded shadow-sm">
+            <div class="container-fluid">
+                <h1 class="display-5">¡Bienvenido, @Model.UsuarioNombre!</h1>
+                <p class="lead text-muted mb-0">Panel de control de GestionIntegral</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Widgets de estadísticas -->
 <div class="row">
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>Usuarios</h3>
-                <p>Administración de usuarios</p>
+                <h3>@Model.TotalUsuarios</h3>
+                <p>Usuarios</p>
             </div>
             <div class="icon">
                 <i class="fas fa-users"></i>
             </div>
-            <a asp-controller="Usuarios" asp-action="Index" class="small-box-footer">Ir <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="/Usuarios" class="small-box-footer">Administrar <i class="fas fa-arrow-circle-right ml-1"></i></a>
         </div>
     </div>
 
     <div class="col-lg-3 col-6">
         <div class="small-box bg-success">
             <div class="inner">
-                <h3>Tipos</h3>
-                <p>Tipos de usuario</p>
+                <h3>@Model.UsuariosActivos</h3>
+                <p>Usuarios Activos</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <span class="small-box-footer">&nbsp;</span>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>@Model.TotalTiposUsuario</h3>
+                <p>Tipos de Usuario</p>
             </div>
             <div class="icon">
                 <i class="fas fa-user-tag"></i>
             </div>
-            <a asp-controller="TiposUsuario" asp-action="Index" class="small-box-footer">Ir <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="/TiposUsuario" class="small-box-footer">Administrar <i class="fas fa-arrow-circle-right ml-1"></i></a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>@Model.TotalParametros</h3>
+                <p>Parámetros</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-sliders-h"></i>
+            </div>
+            <a href="/Parametros" class="small-box-footer">Administrar <i class="fas fa-arrow-circle-right ml-1"></i></a>
+        </div>
+    </div>
+</div>
+
+<!-- Accesos rápidos -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-bolt mr-2"></i> Accesos rápidos</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var acceso in Model.AccesosRapidos)
+                    {
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                            <a href="@acceso.Url" class="btn btn-outline-dark btn-block text-left p-3 h-100">
+                                <i class="fas @acceso.Icono mr-2 @acceso.Color.Replace("bg-", "text-")"></i>
+                                <strong>@acceso.Titulo</strong>
+                                <small class="d-block text-muted mt-1">@acceso.Descripcion</small>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>

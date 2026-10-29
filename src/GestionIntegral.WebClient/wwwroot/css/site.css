@@ -51,6 +51,136 @@ body {
     width: 1%;
 }
 
+/* Tarjetas small-box personalizadas */
+.small-box {
+    text-align: center;
+    background-image: url('/images/fondo_1_claro_ondas.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #f0f4f8;
+    color: #1f3a5f;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.small-box .inner {
+    padding: 20px 10px 40px 10px;
+}
+
+.small-box .inner h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+    white-space: normal;
+    line-height: 1.3;
+    color: #1f3a5f;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.small-box .inner p {
+    font-size: 0.9rem;
+    margin: 5px 0 0 0;
+    color: #1f3a5f;
+}
+
+.small-box .icon {
+    top: 10px;
+    right: 10px;
+    font-size: 50px;
+    opacity: 0.4;
+    color: #1f3a5f;
+}
+
+.small-box .small-box-footer {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    font-weight: 600;
+}
+
+.small-box .btn-administrar,
+.small-box a.small-box-footer,
+.small-box button.small-box-footer {
+    display: block;
+    width: 100%;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    padding: 10px 0;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.small-box .btn-administrar:hover,
+.small-box a.small-box-footer:hover,
+.small-box button.small-box-footer:hover,
+.small-box .btn-administrar:focus,
+.small-box a.small-box-footer:focus,
+.small-box button.small-box-footer:focus {
+    background-color: #e9ecef !important;
+    color: #000 !important;
+    outline: none;
+    box-shadow: none;
+}
+
+/* Menú lateral personalizado */
+.menu-lateral-principal .menu-logo {
+    padding: 1rem 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.menu-lateral-principal .menu-logo:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-lateral-principal .menu-logo img {
+    max-height: 70px;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.menu-lateral-principal .menu-logo span {
+    color: #c2c7d0;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.menu-lateral-principal .menu-boton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    background-color: rgba(255, 255, 255, 0.05);
+    margin-bottom: 0.5rem;
+}
+
+.menu-lateral-principal .menu-boton:hover,
+.menu-lateral-principal .menu-boton.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.menu-lateral-principal .menu-boton i {
+    font-size: 1.3rem;
+    margin-right: 0.75rem;
+}
+
+.menu-lateral-principal .menu-boton p {
+    margin: 0;
+}
+
 /* Logo en menú lateral */
 .brand-link .brand-image {
     max-height: 33px;

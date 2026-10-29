@@ -9,18 +9,16 @@
     @foreach (var tarjeta in Model)
     {
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card tarjeta-parametro h-100 shadow-sm" data-key="@tarjeta.Key" data-api-url="@tarjeta.ApiUrl" data-requiere-afip="@tarjeta.RequiereCodigoAFIP.ToString().ToLower()">
-                <div class="card-header @tarjeta.Color text-white">
-                    <h3 class="card-title">
-                        <i class="fas @tarjeta.Icono mr-2"></i> @tarjeta.Titulo
-                    </h3>
+            <div class="small-box tarjeta-parametro" data-key="@tarjeta.Key" data-api-url="@tarjeta.ApiUrl" data-requiere-afip="@tarjeta.RequiereCodigoAFIP.ToString().ToLower()">
+                <div class="inner">
+                    <h3>@tarjeta.Titulo</h3>
                 </div>
-                <div class="card-body d-flex flex-column">
-                    <p class="text-muted flex-grow-1">Administre los registros de <strong>@tarjeta.Titulo</strong>.</p>
-                    <button type="button" class="btn btn-outline-primary btn-block btn-administrar" data-key="@tarjeta.Key">
-                        <i class="fas fa-cog mr-1"></i> Administrar
-                    </button>
+                <div class="icon">
+                    <i class="fas @tarjeta.Icono"></i>
                 </div>
+                <button type="button" class="small-box-footer btn-administrar" data-key="@tarjeta.Key">
+                    Administrar <i class="fas fa-arrow-circle-right ml-1"></i>
+                </button>
             </div>
         </div>
     }

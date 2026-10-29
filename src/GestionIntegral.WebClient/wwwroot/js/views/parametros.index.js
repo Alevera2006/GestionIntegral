@@ -133,11 +133,11 @@
         $('.btn-administrar').on('click', function () {
             var card = $(this).closest('.tarjeta-parametro');
             apiUrl = card.data('api-url');
-            titulo = card.find('.card-title').text().trim();
+            titulo = card.find('.inner h3').text().trim();
             requiereAfip = card.data('requiere-afip') === true || card.data('requiere-afip') === 'true';
             $('#parametroModalTitle').text('Administrar ' + titulo);
             $('#parametroModalHeader').removeClass('bg-primary bg-success bg-warning bg-info')
-                .addClass(card.find('.card-header').attr('class').replace('card-header', '').trim());
+                .addClass((card.attr('class').match(/\bbg-(?:primary|success|warning|info)\b/) || [])[0] || '');
             $('#parametroFiltroActivo').val('todos');
             $('.col-afip').toggle(requiereAfip);
             $('#parametroCodigoAFIPRow').toggle(requiereAfip);
