@@ -58,12 +58,4 @@
     <Folder Include="Properties" />
     <Folder Include="ScriptsInitial" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="ScriptsInitial\Init.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <Build Include="ScriptsInitial\AgregarAuditoriaParametros.sql" />
-    <Build Include="ScriptsInitial\VerificarTablasParametros.sql" />
-    <Build Include="ScriptsInitial\Init_v2.sql" />
-  </ItemGroup>
 </Project>

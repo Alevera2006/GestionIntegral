@@ -45,12 +45,12 @@ public class AlicuotaImpuestoService : IAlicuotaImpuestoService
 
     public async Task<BaseResponseDto<AlicuotaImpuestoResponseDto>> CrearAsync(CrearAlicuotaImpuestoRequestDto request, CancellationToken cancellationToken = default)
     {
+        if (await _unitOfWork.AlicuotasImpuesto.ExisteCodigoAsync(request.Codigo, cancellationToken))
+            throw new BusinessException($"Ya existe una alícuota con el código '{request.Codigo}'.");
+
         var tipoImpuesto = await _unitOfWork.TiposImpuesto.GetByIdAsync(request.IdTipoImpuesto, cancellationToken);
         if (tipoImpuesto is null)
             throw new NotFoundException(nameof(TipoImpuesto), request.IdTipoImpuesto);
-
-        if (await _unitOfWork.AlicuotasImpuesto.ExisteCodigoAsync(request.Codigo, cancellationToken))
-            throw new BusinessException($"Ya existe una alícuota con el código '{request.Codigo}'.");
 
         ValidarFechas(request.FechaDesde, request.FechaHasta);
 

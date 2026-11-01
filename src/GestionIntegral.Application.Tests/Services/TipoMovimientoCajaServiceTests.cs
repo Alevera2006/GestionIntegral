@@ -93,8 +93,8 @@ public class TipoMovimientoCajaServiceTests
     [Fact]
     public async Task ActualizarAsync_CuandoExiste_ActualizaCorrectamente()
     {
-        var entidad = new TipoMovimientoCaja { IdTipoMovimientoCaja = 1, Codigo = "COD1", Descripcion = "Desc 1", Activo = true };
-        var request = new ActualizarTipoMovimientoCajaRequestDto { IdTipoMovimientoCaja = 1, Codigo = "COD2", Descripcion = "Desc 2", Activo = true };
+        var entidad = new TipoMovimientoCaja { IdTipoMovimientoCaja = 1, Codigo = "COD1", Descripcion = "Desc 1", Signo = 1, Activo = true };
+        var request = new ActualizarTipoMovimientoCajaRequestDto { IdTipoMovimientoCaja = 1, Codigo = "COD2", Descripcion = "Desc 2", Signo = -1, Activo = true };
         _unitOfWorkMock.Setup(u => u.TiposMovimientoCaja.GetByIdAsync(request.IdTipoMovimientoCaja, It.IsAny<CancellationToken>())).ReturnsAsync(entidad);
         _unitOfWorkMock.Setup(u => u.TiposMovimientoCaja.GetByCodigoAsync(request.Codigo, It.IsAny<CancellationToken>())).ReturnsAsync((TipoMovimientoCaja?)null);
         _unitOfWorkMock.Setup(u => u.TiposMovimientoCaja.UpdateAsync(It.IsAny<TipoMovimientoCaja>(), It.IsAny<CancellationToken>()))

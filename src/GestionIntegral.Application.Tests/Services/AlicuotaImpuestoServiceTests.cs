@@ -69,6 +69,8 @@ public class AlicuotaImpuestoServiceTests
             request.Porcentaje = 21;
             request.FechaDesde = DateTime.UtcNow;
             request.FechaHasta = DateTime.UtcNow;
+        var tipoImpuesto = new TipoImpuesto { IdTipoImpuesto = request.IdTipoImpuesto, Codigo = "IVA", Descripcion = "IVA" };
+        _unitOfWorkMock.Setup(u => u.TiposImpuesto.GetByIdAsync(request.IdTipoImpuesto, It.IsAny<CancellationToken>())).ReturnsAsync(tipoImpuesto);
         _unitOfWorkMock.Setup(u => u.AlicuotasImpuesto.ExisteCodigoAsync(request.Codigo, It.IsAny<CancellationToken>())).ReturnsAsync(false);
         _unitOfWorkMock.Setup(u => u.AlicuotasImpuesto.AddAsync(It.IsAny<AlicuotaImpuesto>(), It.IsAny<CancellationToken>()))
             .Returns<AlicuotaImpuesto, CancellationToken>((e, _) => { e.IdAlicuotaImpuesto = 10; return Task.FromResult(e); });
@@ -96,9 +98,11 @@ public class AlicuotaImpuestoServiceTests
     [Fact]
     public async Task ActualizarAsync_CuandoExiste_ActualizaCorrectamente()
     {
-        var entidad = new AlicuotaImpuesto { IdTipoImpuesto = 1, Codigo = "COD1", Descripcion = "Desc 1", Activo = true };
-        var request = new ActualizarAlicuotaImpuestoRequestDto { IdTipoImpuesto = 1, Codigo = "COD2", Descripcion = "Desc 2", Activo = true };
-        _unitOfWorkMock.Setup(u => u.AlicuotasImpuesto.GetByIdAsync(request.IdTipoImpuesto, It.IsAny<CancellationToken>())).ReturnsAsync(entidad);
+        var entidad = new AlicuotaImpuesto { IdAlicuotaImpuesto = 1, IdTipoImpuesto = 1, Codigo = "COD1", Descripcion = "Desc 1", Activo = true };
+        var request = new ActualizarAlicuotaImpuestoRequestDto { IdAlicuotaImpuesto = 1, IdTipoImpuesto = 1, Codigo = "COD2", Descripcion = "Desc 2", Activo = true };
+        var tipoImpuesto = new TipoImpuesto { IdTipoImpuesto = request.IdTipoImpuesto, Codigo = "IVA", Descripcion = "IVA" };
+        _unitOfWorkMock.Setup(u => u.AlicuotasImpuesto.GetByIdAsync(request.IdAlicuotaImpuesto, It.IsAny<CancellationToken>())).ReturnsAsync(entidad);
+        _unitOfWorkMock.Setup(u => u.TiposImpuesto.GetByIdAsync(request.IdTipoImpuesto, It.IsAny<CancellationToken>())).ReturnsAsync(tipoImpuesto);
         _unitOfWorkMock.Setup(u => u.AlicuotasImpuesto.GetByCodigoAsync(request.Codigo, It.IsAny<CancellationToken>())).ReturnsAsync((AlicuotaImpuesto?)null);
         _unitOfWorkMock.Setup(u => u.AlicuotasImpuesto.UpdateAsync(It.IsAny<AlicuotaImpuesto>(), It.IsAny<CancellationToken>()))
             .Returns<AlicuotaImpuesto, CancellationToken>((e, _) => Task.FromResult(e));

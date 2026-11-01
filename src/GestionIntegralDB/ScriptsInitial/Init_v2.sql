@@ -1,4 +1,5 @@
-SET XACT_ABORT ON;
+
+
 USE GestionIntegralDB;
 GO
 

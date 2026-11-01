@@ -49,7 +49,7 @@ public class ProvinciasControllerTests : IClassFixture<CustomWebApplicationFacto
     }
 
     [Fact]
-    public async Task Create_RetornaOkConElementoCreado()
+    public async Task Create_RetornaCreatedConElementoCreado()
     {
         // Arrange
         _factory.ProvinciaServiceMock.Reset();
@@ -83,7 +83,7 @@ public class ProvinciasControllerTests : IClassFixture<CustomWebApplicationFacto
         var response = await _client.PostAsJsonAsync("/api/Provincias", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
         var content = await response.Content.ReadFromJsonAsync<BaseResponseDto<ProvinciaResponseDto>>(_jsonOptions);
         content.Should().NotBeNull();
         content!.Exitoso.Should().BeTrue();

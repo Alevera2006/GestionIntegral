@@ -17,6 +17,9 @@ public class AuthController : BaseController
     public async Task<IActionResult> Login([FromBody] LoginRequestDto request, CancellationToken cancellationToken)
     {
         var response = await _authService.LoginAsync(request, cancellationToken);
-        return Result(response);
+        if (!response.Exitoso)
+            return BadRequest(response);
+
+        return Ok(response);
     }
 }

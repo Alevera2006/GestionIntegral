@@ -93,8 +93,8 @@ public class TipoMovimientoStockServiceTests
     [Fact]
     public async Task ActualizarAsync_CuandoExiste_ActualizaCorrectamente()
     {
-        var entidad = new TipoMovimientoStock { IdTipoMovimientoStock = 1, Codigo = "COD1", Descripcion = "Desc 1", Activo = true };
-        var request = new ActualizarTipoMovimientoStockRequestDto { IdTipoMovimientoStock = 1, Codigo = "COD2", Descripcion = "Desc 2", Activo = true };
+        var entidad = new TipoMovimientoStock { IdTipoMovimientoStock = 1, Codigo = "COD1", Descripcion = "Desc 1", Signo = 1, Activo = true };
+        var request = new ActualizarTipoMovimientoStockRequestDto { IdTipoMovimientoStock = 1, Codigo = "COD2", Descripcion = "Desc 2", Signo = 1, Activo = true };
         _unitOfWorkMock.Setup(u => u.TiposMovimientoStock.GetByIdAsync(request.IdTipoMovimientoStock, It.IsAny<CancellationToken>())).ReturnsAsync(entidad);
         _unitOfWorkMock.Setup(u => u.TiposMovimientoStock.GetByCodigoAsync(request.Codigo, It.IsAny<CancellationToken>())).ReturnsAsync((TipoMovimientoStock?)null);
         _unitOfWorkMock.Setup(u => u.TiposMovimientoStock.UpdateAsync(It.IsAny<TipoMovimientoStock>(), It.IsAny<CancellationToken>()))

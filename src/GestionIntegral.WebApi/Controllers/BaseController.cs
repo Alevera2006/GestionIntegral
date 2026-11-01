@@ -1,4 +1,5 @@
 using GestionIntegral.Application.DTOs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestionIntegral.WebApi.Controllers;
@@ -11,6 +12,9 @@ public abstract class BaseController : ControllerBase
     {
         if (!response.Exitoso)
             return BadRequest(response);
+
+        if (HttpContext?.Request?.Method == HttpMethods.Post)
+            return StatusCode(StatusCodes.Status201Created, response);
 
         return Ok(response);
     }

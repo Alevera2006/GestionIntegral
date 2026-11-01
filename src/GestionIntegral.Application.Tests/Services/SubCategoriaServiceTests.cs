@@ -66,6 +66,8 @@ public class SubCategoriaServiceTests
     {
         var request = new CrearSubCategoriaRequestDto { Codigo = "COD1", Descripcion = "Desc 1" };
             request.IdCategoria = 1;
+        var categoria = new Categoria { IdCategoria = request.IdCategoria, Codigo = "CAT1", Descripcion = "Categoria 1" };
+        _unitOfWorkMock.Setup(u => u.Categorias.GetByIdAsync(request.IdCategoria, It.IsAny<CancellationToken>())).ReturnsAsync(categoria);
         _unitOfWorkMock.Setup(u => u.SubCategorias.ExisteCodigoAsync(request.Codigo, It.IsAny<CancellationToken>())).ReturnsAsync(false);
         _unitOfWorkMock.Setup(u => u.SubCategorias.AddAsync(It.IsAny<SubCategoria>(), It.IsAny<CancellationToken>()))
             .Returns<SubCategoria, CancellationToken>((e, _) => { e.IdSubCategoria = 10; return Task.FromResult(e); });
@@ -83,6 +85,9 @@ public class SubCategoriaServiceTests
     public async Task CrearAsync_CuandoExisteCodigo_LanzaBusinessException()
     {
         var request = new CrearSubCategoriaRequestDto { Codigo = "COD1", Descripcion = "Desc 1" };
+        request.IdCategoria = 1;
+        var categoria = new Categoria { IdCategoria = request.IdCategoria, Codigo = "CAT1", Descripcion = "Categoria 1" };
+        _unitOfWorkMock.Setup(u => u.Categorias.GetByIdAsync(request.IdCategoria, It.IsAny<CancellationToken>())).ReturnsAsync(categoria);
         _unitOfWorkMock.Setup(u => u.SubCategorias.ExisteCodigoAsync(request.Codigo, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         Func<Task> act = async () => await _service.CrearAsync(request);
@@ -93,9 +98,11 @@ public class SubCategoriaServiceTests
     [Fact]
     public async Task ActualizarAsync_CuandoExiste_ActualizaCorrectamente()
     {
-        var entidad = new SubCategoria { IdCategoria = 1, Codigo = "COD1", Descripcion = "Desc 1", Activo = true };
-        var request = new ActualizarSubCategoriaRequestDto { IdCategoria = 1, Codigo = "COD2", Descripcion = "Desc 2", Activo = true };
-        _unitOfWorkMock.Setup(u => u.SubCategorias.GetByIdAsync(request.IdCategoria, It.IsAny<CancellationToken>())).ReturnsAsync(entidad);
+        var entidad = new SubCategoria { IdSubCategoria = 1, IdCategoria = 1, Codigo = "COD1", Descripcion = "Desc 1", Activo = true };
+        var request = new ActualizarSubCategoriaRequestDto { IdSubCategoria = 1, IdCategoria = 1, Codigo = "COD2", Descripcion = "Desc 2", Activo = true };
+        var categoria = new Categoria { IdCategoria = request.IdCategoria, Codigo = "CAT1", Descripcion = "Categoria 1" };
+        _unitOfWorkMock.Setup(u => u.SubCategorias.GetByIdAsync(request.IdSubCategoria, It.IsAny<CancellationToken>())).ReturnsAsync(entidad);
+        _unitOfWorkMock.Setup(u => u.Categorias.GetByIdAsync(request.IdCategoria, It.IsAny<CancellationToken>())).ReturnsAsync(categoria);
         _unitOfWorkMock.Setup(u => u.SubCategorias.GetByCodigoAsync(request.Codigo, It.IsAny<CancellationToken>())).ReturnsAsync((SubCategoria?)null);
         _unitOfWorkMock.Setup(u => u.SubCategorias.UpdateAsync(It.IsAny<SubCategoria>(), It.IsAny<CancellationToken>()))
             .Returns<SubCategoria, CancellationToken>((e, _) => Task.FromResult(e));
