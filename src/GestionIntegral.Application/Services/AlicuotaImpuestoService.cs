@@ -94,6 +94,7 @@ public class AlicuotaImpuestoService : IAlicuotaImpuestoService
         var userId = _currentUserService.UserId ?? 1;
 
         alicuota.IdTipoImpuesto = request.IdTipoImpuesto;
+        alicuota.TipoImpuesto = tipoImpuesto;
         alicuota.Codigo = request.Codigo;
         alicuota.Descripcion = request.Descripcion;
         alicuota.Porcentaje = request.Porcentaje;
@@ -104,7 +105,6 @@ public class AlicuotaImpuestoService : IAlicuotaImpuestoService
         alicuota.IdUsuarioUltimaModificacion = userId;
         alicuota.FechaUltimaModificacion = DateTime.UtcNow;
 
-        await _unitOfWork.AlicuotasImpuesto.UpdateAsync(alicuota, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return BaseResponseDto<AlicuotaImpuestoResponseDto>.Ok(_mapper.Map<AlicuotaImpuestoResponseDto>(alicuota), "Alícuota actualizada correctamente.");
@@ -126,7 +126,6 @@ public class AlicuotaImpuestoService : IAlicuotaImpuestoService
         alicuota.IdUsuarioUltimaModificacion = userId;
         alicuota.FechaUltimaModificacion = DateTime.UtcNow;
 
-        await _unitOfWork.AlicuotasImpuesto.UpdateAsync(alicuota, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return BaseResponseDto<bool>.Ok(true, "Alícuota dada de baja correctamente.");

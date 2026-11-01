@@ -34,14 +34,6 @@ public class ProveedorConfiguration : IEntityTypeConfiguration<Proveedor>
             .HasColumnName("CUIT")
             .HasMaxLength(13);
 
-        builder.Property(e => e.Email)
-            .HasColumnName("Email")
-            .HasMaxLength(150);
-
-        builder.Property(e => e.Telefono)
-            .HasColumnName("Telefono")
-            .HasMaxLength(50);
-
         builder.Property(e => e.IdCondicionPago)
             .HasColumnName("IdCondicionPago");
 

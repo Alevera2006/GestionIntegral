@@ -25,6 +25,13 @@
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Ingrese sus credenciales</p>
 
+                @if (Context.Request.Query["expired"] == "1")
+                {
+                    <div class="alert alert-warning" role="alert">
+                        Su sesión expiró. Inicie sesión nuevamente.
+                    </div>
+                }
+
                 <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
                     @Html.AntiForgeryToken()
 

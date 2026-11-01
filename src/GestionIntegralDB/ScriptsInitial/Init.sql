@@ -3,6 +3,9 @@ USE GestionIntegralDB;
 GO
 --d
 -- Eliminaci¢n de tablas en orden inverso a las dependencias para permitir recrear la base
+IF OBJECT_ID('dbo.Emails', 'U') IS NOT NULL DROP TABLE dbo.Emails;
+IF OBJECT_ID('dbo.Telefonos', 'U') IS NOT NULL DROP TABLE dbo.Telefonos;
+IF OBJECT_ID('dbo.Domicilios', 'U') IS NOT NULL DROP TABLE dbo.Domicilios;
 IF OBJECT_ID('dbo.MovimientoStockDetalle', 'U') IS NOT NULL DROP TABLE dbo.MovimientoStockDetalle;
 IF OBJECT_ID('dbo.MovimientosStock', 'U') IS NOT NULL DROP TABLE dbo.MovimientosStock;
 IF OBJECT_ID('dbo.Stock', 'U') IS NOT NULL DROP TABLE dbo.Stock;
@@ -325,10 +328,6 @@ CREATE TABLE Clientes
     RazonSocial          VARCHAR(150) NOT NULL,
     NombreFantasia       VARCHAR(150) NULL,
 
-    CUIT                  VARCHAR(13) NULL,
-    Email                 VARCHAR(150) NULL,
-    Telefono              VARCHAR(50) NULL,
-
     IdCondicionPago       INT NULL,
 
     Observaciones         VARCHAR(500) NULL,
@@ -371,10 +370,6 @@ CREATE TABLE Proveedores
     Codigo               VARCHAR(20) NOT NULL,
     RazonSocial          VARCHAR(150) NOT NULL,
     NombreFantasia       VARCHAR(150) NULL,
-
-    CUIT                  VARCHAR(13) NULL,
-    Email                 VARCHAR(150) NULL,
-    Telefono              VARCHAR(50) NULL,
 
     IdCondicionPago       INT NULL,
 
@@ -1091,6 +1086,9 @@ CREATE TABLE Monedas
         CONSTRAINT DF_Monedas_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
 
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2(3) NULL,
+
     CONSTRAINT PK_Monedas
         PRIMARY KEY (IdMoneda),
 
@@ -1124,6 +1122,9 @@ CREATE TABLE MediosPago
         CONSTRAINT DF_MediosPago_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
 
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
+
     CONSTRAINT PK_MediosPago
         PRIMARY KEY (IdMedioPago),
 
@@ -1147,6 +1148,9 @@ CREATE TABLE TiposMovimientoCaja
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_TiposMovimientoCaja_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_TiposMovimientoCaja
         PRIMARY KEY (IdTipoMovimientoCaja),
@@ -1173,6 +1177,9 @@ CREATE TABLE EstadosCaja
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_EstadosCaja_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_EstadosCaja
         PRIMARY KEY (IdEstadoCaja),
@@ -1259,6 +1266,9 @@ CREATE TABLE Depositos
         CONSTRAINT DF_Depositos_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
 
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2(3) NULL,
+
     CONSTRAINT PK_Depositos
         PRIMARY KEY (IdDeposito),
 
@@ -1284,6 +1294,9 @@ CREATE TABLE TiposMovimientoStock
     FechaCreacion         DATETIME2 NOT NULL
         CONSTRAINT DF_TiposMovimientoStock_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_TiposMovimientoStock
         PRIMARY KEY (IdTipoMovimientoStock),
@@ -1395,7 +1408,6 @@ CREATE TABLE MovimientoStockDetalle
 );
 
 
-
 INSERT INTO dbo.Provincias (Codigo, Descripcion, IdUsuarioCreacion)
 VALUES
     ('BA',   'BUENOS AIRES', 1),
@@ -1424,5 +1436,306 @@ VALUES
     ('TUC',  'TUCUMÁN', 1);
 
 
-
     SELECT * FROM DBO.Provincias
+
+GO
+
+SET XACT_ABORT ON;
+USE GestionIntegralDB;
+GO
+
+BEGIN TRY
+    BEGIN TRANSACTION;
+
+    IF OBJECT_ID('dbo.Domicilios', 'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.Domicilios
+        (
+            IdDomicilio           INT IDENTITY(1,1) NOT NULL,
+            IdCliente             INT NULL,
+            IdProveedor            INT NULL,
+
+            Domicilio             NVARCHAR(250) NOT NULL,
+            Ciudad                NVARCHAR(100) NOT NULL,
+            Localidad             NVARCHAR(100) NOT NULL,
+            IdProvincia           INT NOT NULL,
+            CodigoPostal          NVARCHAR(20) NULL,
+
+            Activo               BIT NOT NULL
+                CONSTRAINT DF_Domicilios_Activo DEFAULT 1,
+            FechaBaja            DATETIME2 NULL,
+
+            IdUsuarioCreacion    INT NOT NULL,
+            FechaCreacion        DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+            IdUsuarioUltimaModificacion INT NULL,
+            FechaUltimaModificacion DATETIME2 NULL,
+
+            CONSTRAINT PK_Domicilios
+                PRIMARY KEY (IdDomicilio),
+
+            CONSTRAINT FK_Domicilios_Clientes
+                FOREIGN KEY (IdCliente)
+                REFERENCES Clientes(IdCliente),
+
+            CONSTRAINT FK_Domicilios_Proveedores
+                FOREIGN KEY (IdProveedor)
+                REFERENCES Proveedores(IdProveedor),
+
+            CONSTRAINT FK_Domicilios_UsuariosCreacion
+                FOREIGN KEY (IdUsuarioCreacion)
+                REFERENCES Usuarios(IdUsuario),
+
+            CONSTRAINT FK_Domicilios_UsuariosModificacion
+                FOREIGN KEY (IdUsuarioUltimaModificacion)
+                REFERENCES Usuarios(IdUsuario),
+
+            CONSTRAINT CK_Domicilios_FechaBaja
+                CHECK (
+                    (Activo = 1 AND FechaBaja IS NULL)
+                    OR
+                    (Activo = 0 AND FechaBaja IS NOT NULL)
+                ),
+
+            CONSTRAINT CHK_Domicilios_ClienteProveedor
+                CHECK (
+                    (IdCliente IS NOT NULL AND IdProveedor IS NULL)
+                    OR
+                    (IdCliente IS NULL AND IdProveedor IS NOT NULL)
+                )
+        );
+    END
+
+    IF OBJECT_ID('dbo.Telefonos', 'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.Telefonos
+        (
+            IdTelefono            INT IDENTITY(1,1) NOT NULL,
+            IdCliente             INT NULL,
+            IdProveedor            INT NULL,
+
+            NumeroTelefono        NVARCHAR(50) NOT NULL,
+            TipoTelefono          NVARCHAR(7) NOT NULL
+                CONSTRAINT DF_TiposTelefono DEFAULT ('Fijo'),
+
+            Activo               BIT NOT NULL
+                CONSTRAINT DF_Telefonos_Activo DEFAULT 1,
+            FechaBaja            DATETIME2 NULL,
+
+            IdUsuarioCreacion    INT NOT NULL,
+            FechaCreacion        DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+            IdUsuarioUltimaModificacion INT NULL,
+            FechaUltimaModificacion DATETIME2 NULL,
+
+            CONSTRAINT PK_Telefonos
+                PRIMARY KEY (IdTelefono),
+
+            CONSTRAINT FK_Telefonos_Clientes
+                FOREIGN KEY (IdCliente)
+                REFERENCES Clientes(IdCliente),
+
+            CONSTRAINT FK_Telefonos_Proveedores
+                FOREIGN KEY (IdProveedor)
+                REFERENCES Proveedores(IdProveedor),
+
+            CONSTRAINT FK_Telefonos_UsuariosCreacion
+                FOREIGN KEY (IdUsuarioCreacion)
+                REFERENCES Usuarios(IdUsuario),
+
+            CONSTRAINT FK_Telefonos_UsuariosModificacion
+                FOREIGN KEY (IdUsuarioUltimaModificacion)
+                REFERENCES Usuarios(IdUsuario),
+
+            CONSTRAINT CK_Telefonos_FechaBaja
+                CHECK (
+                    (Activo = 1 AND FechaBaja IS NULL)
+                    OR
+                    (Activo = 0 AND FechaBaja IS NOT NULL)
+                ),
+
+            CONSTRAINT CHK_Telefonos_ClienteProveedor
+                CHECK (
+                    (IdCliente IS NOT NULL AND IdProveedor IS NULL)
+                    OR
+                    (IdCliente IS NULL AND IdProveedor IS NOT NULL)
+                )
+        );
+    END
+
+    IF OBJECT_ID('dbo.Emails', 'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.Emails
+        (
+            IdEmail               INT IDENTITY(1,1) NOT NULL,
+            IdCliente             INT NULL,
+            IdProveedor            INT NULL,
+            TipoReferencia        NVARCHAR(1) NULL,
+            IdReferencia          INT NULL,
+
+            Email                 NVARCHAR(254) NOT NULL,
+
+            Activo               BIT NOT NULL
+                CONSTRAINT DF_Emails_Activo DEFAULT 1,
+            FechaBaja            DATETIME2 NULL,
+
+            IdUsuarioCreacion    INT NOT NULL,
+            FechaCreacion        DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+            IdUsuarioUltimaModificacion INT NULL,
+            FechaUltimaModificacion DATETIME2 NULL,
+
+            CONSTRAINT PK_Emails
+                PRIMARY KEY (IdEmail),
+
+            
+            CONSTRAINT FK_Emails_UsuariosCreacion
+                FOREIGN KEY (IdUsuarioCreacion)
+                REFERENCES Usuarios(IdUsuario),
+
+            CONSTRAINT FK_Emails_UsuariosModificacion
+                FOREIGN KEY (IdUsuarioUltimaModificacion)
+                REFERENCES Usuarios(IdUsuario),
+
+            CONSTRAINT CK_Emails_FechaBaja
+                CHECK (
+                    (Activo = 1 AND FechaBaja IS NULL)
+                    OR
+                    (Activo = 0 AND FechaBaja IS NOT NULL)
+                ),
+
+            CONSTRAINT CHK_Emails_ClienteProveedor
+                CHECK (
+                    (IdCliente IS NOT NULL AND IdProveedor IS NULL)
+                    OR
+                    (IdCliente IS NULL AND IdProveedor IS NOT NULL)
+                )
+        );
+    END
+
+    -- Garantiza CUIT en esquemas existentes (collation case-sensitive)
+    IF OBJECT_ID('dbo.Clientes', 'U') IS NOT NULL
+    BEGIN
+        IF COL_LENGTH('dbo.Clientes', 'CUIT') IS NULL AND COL_LENGTH('dbo.Clientes', 'cuit') IS NOT NULL
+            EXEC sp_rename 'dbo.Clientes.cuit', 'CUIT', 'COLUMN';
+
+        IF COL_LENGTH('dbo.Clientes', 'CUIT') IS NULL
+            ALTER TABLE dbo.Clientes ADD CUIT NVARCHAR(13) NULL;
+    END
+
+    IF OBJECT_ID('dbo.Proveedores', 'U') IS NOT NULL
+    BEGIN
+        IF COL_LENGTH('dbo.Proveedores', 'CUIT') IS NULL AND COL_LENGTH('dbo.Proveedores', 'cuit') IS NOT NULL
+            EXEC sp_rename 'dbo.Proveedores.cuit', 'CUIT', 'COLUMN';
+
+        IF COL_LENGTH('dbo.Proveedores', 'CUIT') IS NULL
+            ALTER TABLE dbo.Proveedores ADD CUIT NVARCHAR(13) NULL;
+    END
+
+    -- Normaliza Emails al modelo TipoReferencia (C/P) + IdReferencia
+    IF OBJECT_ID('dbo.Emails', 'U') IS NOT NULL
+    BEGIN
+        IF COL_LENGTH('dbo.Emails', 'TipoReferencia') IS NULL
+            ALTER TABLE dbo.Emails ADD TipoReferencia NVARCHAR(1) NULL;
+
+        IF COL_LENGTH('dbo.Emails', 'IdReferencia') IS NULL
+            ALTER TABLE dbo.Emails ADD IdReferencia INT NULL;
+
+        IF COL_LENGTH('dbo.Emails', 'IdCliente') IS NOT NULL OR COL_LENGTH('dbo.Emails', 'IdProveedor') IS NOT NULL
+        BEGIN
+            UPDATE e
+            SET
+                TipoReferencia = CASE
+                    WHEN COL_LENGTH('dbo.Emails', 'IdCliente') IS NOT NULL AND e.IdCliente IS NOT NULL THEN 'C'
+                    WHEN COL_LENGTH('dbo.Emails', 'IdProveedor') IS NOT NULL AND e.IdProveedor IS NOT NULL THEN 'P'
+                    ELSE TipoReferencia
+                END,
+                IdReferencia = COALESCE(
+                    CASE WHEN COL_LENGTH('dbo.Emails', 'IdCliente') IS NOT NULL THEN e.IdCliente END,
+                    CASE WHEN COL_LENGTH('dbo.Emails', 'IdProveedor') IS NOT NULL THEN e.IdProveedor END,
+                    IdReferencia)
+            FROM dbo.Emails e;
+        END
+
+        IF COL_LENGTH('dbo.Emails', 'TipoReferencia') IS NOT NULL
+            ALTER TABLE dbo.Emails ALTER COLUMN TipoReferencia NVARCHAR(1) NOT NULL;
+
+        IF COL_LENGTH('dbo.Emails', 'IdReferencia') IS NOT NULL
+            ALTER TABLE dbo.Emails ALTER COLUMN IdReferencia INT NOT NULL;
+
+        IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = 'CK_Emails_TipoReferencia')
+            ALTER TABLE dbo.Emails ADD CONSTRAINT CK_Emails_TipoReferencia CHECK (TipoReferencia IN ('C', 'P'));
+
+        IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = 'CK_Emails_IdReferencia')
+            ALTER TABLE dbo.Emails ADD CONSTRAINT CK_Emails_IdReferencia CHECK (IdReferencia > 0);
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Emails_TipoReferencia_IdReferencia' AND object_id = OBJECT_ID('dbo.Emails'))
+            CREATE INDEX IX_Emails_TipoReferencia_IdReferencia ON dbo.Emails (TipoReferencia, IdReferencia);
+    END
+
+    -- Normaliza Emails al modelo TipoReferencia (C/P) + IdReferencia
+    IF OBJECT_ID('dbo.Emails', 'U') IS NOT NULL
+    BEGIN
+        IF COL_LENGTH('dbo.Emails', 'TipoReferencia') IS NULL
+            ALTER TABLE dbo.Emails ADD TipoReferencia NVARCHAR(1) NULL;
+
+        IF COL_LENGTH('dbo.Emails', 'IdReferencia') IS NULL
+            ALTER TABLE dbo.Emails ADD IdReferencia INT NULL;
+
+        IF COL_LENGTH('dbo.Emails', 'IdCliente') IS NOT NULL OR COL_LENGTH('dbo.Emails', 'IdProveedor') IS NOT NULL
+        BEGIN
+            UPDATE e
+            SET
+                TipoReferencia = CASE
+                    WHEN COL_LENGTH('dbo.Emails', 'IdCliente') IS NOT NULL AND e.IdCliente IS NOT NULL THEN 'C'
+                    WHEN COL_LENGTH('dbo.Emails', 'IdProveedor') IS NOT NULL AND e.IdProveedor IS NOT NULL THEN 'P'
+                    ELSE TipoReferencia
+                END,
+                IdReferencia = COALESCE(
+                    CASE WHEN COL_LENGTH('dbo.Emails', 'IdCliente') IS NOT NULL THEN e.IdCliente END,
+                    CASE WHEN COL_LENGTH('dbo.Emails', 'IdProveedor') IS NOT NULL THEN e.IdProveedor END,
+                    IdReferencia)
+            FROM dbo.Emails e;
+        END
+
+        IF COL_LENGTH('dbo.Emails', 'TipoReferencia') IS NOT NULL
+            ALTER TABLE dbo.Emails ALTER COLUMN TipoReferencia NVARCHAR(1) NOT NULL;
+
+        IF COL_LENGTH('dbo.Emails', 'IdReferencia') IS NOT NULL
+            ALTER TABLE dbo.Emails ALTER COLUMN IdReferencia INT NOT NULL;
+
+        IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = 'CK_Emails_TipoReferencia')
+            ALTER TABLE dbo.Emails ADD CONSTRAINT CK_Emails_TipoReferencia CHECK (TipoReferencia IN ('C', 'P'));
+
+        IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = 'CK_Emails_IdReferencia')
+            ALTER TABLE dbo.Emails ADD CONSTRAINT CK_Emails_IdReferencia CHECK (IdReferencia > 0);
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Emails_TipoReferencia_IdReferencia' AND object_id = OBJECT_ID('dbo.Emails'))
+            CREATE INDEX IX_Emails_TipoReferencia_IdReferencia ON dbo.Emails (TipoReferencia, IdReferencia);
+    END
+
+    COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+        ROLLBACK TRANSACTION;
+
+    THROW;
+END CATCH;
+
+DROP TABLE IF EXISTS dbo.Emails;
+CREATE TABLE dbo.Emails (
+	IdEmail INT IDENTITY(1,1) NOT NULL,
+	TipoReferencia NVARCHAR(1) NOT NULL,
+	IdReferencia INT NOT NULL,
+	Email NVARCHAR(254) NOT NULL,
+	Activo BIT NOT NULL DEFAULT (1),
+	FechaBaja DATETIME2(3) NULL,
+	IdUsuarioCreacion INT NOT NULL,
+	FechaCreacion DATETIME2(3) NOT NULL DEFAULT (SYSUTCDATETIME()),
+	IdUsuarioUltimaModificacion INT NULL,
+	FechaUltimaModificacion DATETIME2(3) NULL,
+	CONSTRAINT PK_Emails PRIMARY KEY (IdEmail),
+	CONSTRAINT CK_Emails_TipoReferencia CHECK (TipoReferencia IN (N'C', N'P')),
+	CONSTRAINT CK_Emails_IdReferencia CHECK (IdReferencia > 0),
+	CONSTRAINT FK_Emails_UsuariosCreacion FOREIGN KEY (IdUsuarioCreacion) REFERENCES dbo.Usuarios(IdUsuario),
+	CONSTRAINT FK_Emails_UsuariosModificacion FOREIGN KEY (IdUsuarioUltimaModificacion) REFERENCES dbo.Usuarios(IdUsuario)
+);
+CREATE INDEX IX_Emails_TipoReferencia_IdReferencia ON dbo.Emails(TipoReferencia, IdReferencia);

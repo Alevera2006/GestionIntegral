@@ -12,7 +12,6 @@ public class AlicuotaImpuestoRepository : Repository<AlicuotaImpuesto>, IAlicuot
     public override async Task<AlicuotaImpuesto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .AsNoTracking()
             .Include(a => a.TipoImpuesto)
             .FirstOrDefaultAsync(a => a.IdAlicuotaImpuesto == id, cancellationToken);
     }

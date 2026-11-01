@@ -35,6 +35,9 @@ public interface IUnitOfWork : IDisposable
     IMovimientoStockDetalleRepository MovimientoStockDetalle { get; }
     IContactoRepository Contactos { get; }
     IClienteContactoRepository ClienteContactos { get; }
+    IDomicilioRepository Domicilios { get; }
+    ITelefonoRepository Telefonos { get; }
+    IEmailRepository Emails { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

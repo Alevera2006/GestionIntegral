@@ -7,6 +7,8 @@ public class DashboardViewModel
     public int UsuariosActivos { get; set; }
     public int TotalTiposUsuario { get; set; }
     public int TotalParametros { get; set; }
+    public int TotalClientes { get; set; }
+    public int TotalProveedores { get; set; }
     public List<AccesoRapidoViewModel> AccesosRapidos { get; set; } = new();
 }
 

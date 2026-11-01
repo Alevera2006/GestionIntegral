@@ -40,6 +40,9 @@ public class UnitOfWork : IUnitOfWork
     public IMovimientoStockDetalleRepository MovimientoStockDetalle { get; }
     public IContactoRepository Contactos { get; }
     public IClienteContactoRepository ClienteContactos { get; }
+    public IDomicilioRepository Domicilios { get; }
+    public ITelefonoRepository Telefonos { get; }
+    public IEmailRepository Emails { get; }
 
     public UnitOfWork(GestionIntegralDbContext context)
     {
@@ -77,6 +80,9 @@ public class UnitOfWork : IUnitOfWork
         MovimientoStockDetalle = new MovimientoStockDetalleRepository(context);
         Contactos = new ContactoRepository(context);
         ClienteContactos = new ClienteContactoRepository(context);
+        Domicilios = new DomicilioRepository(context);
+        Telefonos = new TelefonoRepository(context);
+        Emails = new EmailRepository(context);
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

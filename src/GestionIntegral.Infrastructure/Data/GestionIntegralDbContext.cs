@@ -40,6 +40,9 @@ public class GestionIntegralDbContext : DbContext
     public DbSet<MovimientoStockDetalle> MovimientoStockDetalle => Set<MovimientoStockDetalle>();
     public DbSet<Contacto> Contactos => Set<Contacto>();
     public DbSet<ClienteContacto> ClienteContactos => Set<ClienteContacto>();
+    public DbSet<Domicilio> Domicilios => Set<Domicilio>();
+    public DbSet<Telefono> Telefonos => Set<Telefono>();
+    public DbSet<Email> Emails => Set<Email>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

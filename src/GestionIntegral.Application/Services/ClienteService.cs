@@ -56,9 +56,7 @@ public class ClienteService : IClienteService
             Codigo = request.Codigo,
             RazonSocial = request.RazonSocial,
             NombreFantasia = request.NombreFantasia,
-            CUIT = request.CUIT,
-            Email = request.Email,
-            Telefono = request.Telefono,
+            CUIT = request.Cuit,
             IdCondicionPago = request.IdCondicionPago,
             Observaciones = request.Observaciones,
             Activo = true,
@@ -94,9 +92,7 @@ public class ClienteService : IClienteService
         cliente.Codigo = request.Codigo;
         cliente.RazonSocial = request.RazonSocial;
         cliente.NombreFantasia = request.NombreFantasia;
-        cliente.CUIT = request.CUIT;
-        cliente.Email = request.Email;
-        cliente.Telefono = request.Telefono;
+        cliente.CUIT = request.Cuit;
         cliente.IdCondicionPago = request.IdCondicionPago;
         cliente.Observaciones = request.Observaciones;
         cliente.Activo = request.Activo;

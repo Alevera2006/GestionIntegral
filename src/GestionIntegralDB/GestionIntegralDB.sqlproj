@@ -62,8 +62,8 @@
     <None Include="ScriptsInitial\Init.sql" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="ScriptsInitial\InsertProvincias.sql" />
-    <Build Include="ScriptsInitial\BorrarUsuariosYTiposUsuario.sql" />
-    <Build Include="ScriptsInitial\CrearUsuariosYTiposUsuario.sql" />
+    <Build Include="ScriptsInitial\AgregarAuditoriaParametros.sql" />
+    <Build Include="ScriptsInitial\VerificarTablasParametros.sql" />
+    <Build Include="ScriptsInitial\Init_v2.sql" />
   </ItemGroup>
 </Project>

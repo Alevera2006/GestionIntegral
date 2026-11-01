@@ -49,6 +49,13 @@ public class MonedaConfiguration : IEntityTypeConfiguration<Moneda>
             .HasColumnType("datetime2")
             .IsRequired();
 
+        builder.Property(e => e.IdUsuarioUltimaModificacion)
+            .HasColumnName("IdUsuarioUltimaModificacion");
+
+        builder.Property(e => e.FechaUltimaModificacion)
+            .HasColumnName("FechaUltimaModificacion")
+            .HasColumnType("datetime2(3)");
+
         builder.HasIndex(e => e.Codigo)
             .IsUnique()
             .HasDatabaseName("UQ_Monedas_Codigo");

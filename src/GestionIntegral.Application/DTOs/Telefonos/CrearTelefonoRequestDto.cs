@@ -1,0 +1,9 @@
+namespace GestionIntegral.Application.DTOs.Telefonos;
+
+public class CrearTelefonoRequestDto
+{
+    public string TipoReferencia { get; set; } = string.Empty;
+    public int IdReferencia { get; set; }
+    public string NumeroTelefono { get; set; } = string.Empty;
+    public string TipoTelefono { get; set; } = string.Empty;
+}

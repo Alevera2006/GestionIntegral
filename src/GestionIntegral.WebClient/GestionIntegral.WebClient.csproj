@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+  </ItemGroup>
+
+  <!-- Views use the source CSS/JS; generated bundles must not be required by static web assets. -->
+  <ItemGroup>
+    <Content Remove="wwwroot\css\site.min.css;wwwroot\js\site.min.js;wwwroot\js\theme.min.js;wwwroot\js\views\*.min.js" />
   </ItemGroup>
 
   <ItemGroup>

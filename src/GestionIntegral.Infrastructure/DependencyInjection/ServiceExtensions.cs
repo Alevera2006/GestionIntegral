@@ -57,6 +57,9 @@ public static class ServiceExtensions
         services.AddScoped<IMovimientoStockDetalleRepository, MovimientoStockDetalleRepository>();
         services.AddScoped<IContactoRepository, ContactoRepository>();
         services.AddScoped<IClienteContactoRepository, ClienteContactoRepository>();
+        services.AddScoped<IDomicilioRepository, DomicilioRepository>();
+        services.AddScoped<ITelefonoRepository, TelefonoRepository>();
+        services.AddScoped<IEmailRepository, EmailRepository>();
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPasswordService, PasswordService>();

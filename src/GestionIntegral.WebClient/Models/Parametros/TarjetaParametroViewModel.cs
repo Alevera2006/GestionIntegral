@@ -6,6 +6,7 @@ public class TarjetaParametroViewModel
     public string Titulo { get; set; } = string.Empty;
     public string Icono { get; set; } = string.Empty;
     public string Color { get; set; } = string.Empty;
+    public string Grupo { get; set; } = "parametricos";
     public string ApiUrl { get; set; } = string.Empty;
     public bool RequiereCodigoAFIP { get; set; }
 }

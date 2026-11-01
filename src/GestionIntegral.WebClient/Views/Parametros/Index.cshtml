@@ -5,19 +5,24 @@
 
 <partial name="_Alerts" />
 
-<div class="row">
+<div class="btn-group d-flex flex-wrap mb-4" role="group" aria-label="Secciones de parámetros" id="gruposParametros">
+    <button type="button" class="btn btn-primary active" data-grupo="parametricos" aria-pressed="true">Paramétricos</button>
+    <button type="button" class="btn btn-outline-primary" data-grupo="ventas" aria-pressed="false">Ventas</button>
+    <button type="button" class="btn btn-outline-primary" data-grupo="compras" aria-pressed="false">Compras</button>
+    <button type="button" class="btn btn-outline-primary" data-grupo="stock" aria-pressed="false">Stock</button>
+    <button type="button" class="btn btn-outline-primary" data-grupo="finanzas" aria-pressed="false">Finanzas</button>
+</div>
+
+<div class="row" id="tarjetasParametros">
     @foreach (var tarjeta in Model)
     {
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-grupo="@tarjeta.Grupo" hidden="@(tarjeta.Grupo != "parametricos")">
             <div class="small-box tarjeta-parametro" data-key="@tarjeta.Key" data-api-url="@tarjeta.ApiUrl" data-requiere-afip="@tarjeta.RequiereCodigoAFIP.ToString().ToLower()">
                 <div class="inner">
                     <h3>@tarjeta.Titulo</h3>
                 </div>
-                <div class="icon">
-                    <i class="fas @tarjeta.Icono"></i>
-                </div>
                 <button type="button" class="small-box-footer btn-administrar" data-key="@tarjeta.Key">
-                    Administrar <i class="fas fa-arrow-circle-right ml-1"></i>
+                    Administrar <i class="fas @tarjeta.Icono tarjeta-icono-footer"></i>
                 </button>
             </div>
         </div>
@@ -54,6 +59,7 @@
                             <tr>
                                 <th>Código</th>
                                 <th>Descripción</th>
+                                <th class="col-categoria" style="display: none;">Categoría</th>
                                 <th class="col-afip" style="display: none;">AFIP</th>
                                 <th>Activo</th>
                                 <th class="table-actions">Acciones</th>
@@ -96,6 +102,37 @@
                         <div class="col-md-6 form-group">
                             <label for="parametroCodigoAFIP">Código AFIP</label>
                             <input type="text" id="parametroCodigoAFIP" class="form-control" maxlength="50" />
+                        </div>
+                    </div>
+                    <div class="row" id="parametroAlicuotaRow" style="display: none;">
+                        <div class="col-md-8 form-group">
+                            <label for="parametroIdTipoImpuesto">Tipo de Impuesto</label>
+                            <select id="parametroIdTipoImpuesto" class="form-control">
+                                <option value="">Seleccione un tipo de impuesto</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label for="parametroPorcentaje">Porcentaje</label>
+                            <input type="number" id="parametroPorcentaje" class="form-control" min="0" step="0.01" />
+                        </div>
+                    </div>
+                    <div class="form-group" id="parametroCategoriaRow" style="display: none;">
+                        <label for="parametroIdCategoria">Categoría</label>
+                        <select id="parametroIdCategoria" class="form-control" required disabled>
+                            <option value="">Seleccione una categoría</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="grupoSigno" style="display: none;">
+                        <label>Signo</label>
+                        <div>
+                            <div class="icheck-primary d-inline">
+                                <input type="radio" id="signoPositivo" name="Signo" value="1" />
+                                <label for="signoPositivo">Positivo</label>
+                            </div>
+                            <div class="icheck-primary d-inline">
+                                <input type="radio" id="signoNegativo" name="Signo" value="-1" />
+                                <label for="signoNegativo">Negativo</label>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group mb-0">

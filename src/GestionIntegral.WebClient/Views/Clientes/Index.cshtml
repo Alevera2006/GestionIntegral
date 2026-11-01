@@ -1,0 +1,256 @@
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<partial name="_Alerts" />
+
+<div class="row justify-content-center">
+    <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
+        <div class="small-box bg-primary h-100">
+            <div class="inner">
+                <h3><i class="fas fa-users mr-2"></i> Clientes</h3>
+                <p>Administre los clientes y sus datos de contacto.</p>
+            </div>
+            <button type="button" class="small-box-footer btn-administrar" id="btnAbrirClientes">
+                <i class="fas fa-users mr-1"></i> Clientes
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="clienteModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title">Administrar Clientes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="clienteForm" autocomplete="off">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="clienteId" />
+
+                    <div class="row">
+                        <div class="col-md-3 form-group">
+                            <label for="clienteCodigo">Código</label>
+                            <input type="text" id="clienteCodigo" class="form-control" maxlength="20" required />
+                        </div>
+                        <div class="col-md-5 form-group">
+                            <label for="clienteRazonSocial">Razón Social</label>
+                            <input type="text" id="clienteRazonSocial" class="form-control" maxlength="150" required />
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label for="clienteNombreFantasia">Nombre Fantasía</label>
+                            <input type="text" id="clienteNombreFantasia" class="form-control" maxlength="150" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <label for="clienteCuit">CUIT</label>
+                            <input type="text" id="clienteCuit" class="form-control" maxlength="13" />
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label for="clienteCondicionPago">Condición de Pago</label>
+                            <select id="clienteCondicionPago" class="form-control"></select>
+                        </div>
+                        <div class="col-md-2 form-group d-flex align-items-end">
+                            <div class="icheck-primary d-inline">
+                                <input type="checkbox" id="clienteActivo" checked />
+                                <label for="clienteActivo">Activo</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <label for="clienteObservaciones">Observaciones</label>
+                            <textarea id="clienteObservaciones" class="form-control" rows="2" maxlength="500"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
+                        <div>
+                            <button type="button" id="btnClienteDomicilios" class="btn btn-outline-info btn-sm mr-1 btn-domicilios" data-id="0" disabled>
+                                <i class="fas fa-map-marker-alt mr-1"></i> Domicilios
+                            </button>
+                            <button type="button" id="btnClienteTelefonos" class="btn btn-outline-secondary btn-sm mr-1 btn-telefonos" data-id="0" disabled>
+                                <i class="fas fa-phone mr-1"></i> Teléfonos
+                            </button>
+                            <button type="button" id="btnClienteEmails" class="btn btn-outline-warning btn-sm btn-emails" data-id="0" disabled>
+                                <i class="fas fa-envelope mr-1"></i> Emails
+                            </button>
+                        </div>
+                        <div class="form-group text-right mb-0 mt-2 mt-md-0">
+                            <button type="button" id="btnNuevoCliente" class="btn btn-secondary"><i class="fas fa-plus mr-1"></i> Nuevo</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i> Guardar</button>
+                        </div>
+                    </div>
+                </form>
+
+                <hr />
+
+                <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                    <table class="table table-sm table-striped table-hover mb-0" id="clienteTable">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Razón Social</th>
+                                <th>CUIT</th>
+                                <th>Condición</th>
+                                <th>Activo</th>
+                                <th class="table-actions">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="clienteDomiciliosModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title">Domicilios del Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="domClienteId" />
+                <input type="hidden" id="domId" />
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="domDomicilio">Domicilio</label>
+                        <input type="text" id="domDomicilio" class="form-control" maxlength="250" />
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="domCiudad">Ciudad</label>
+                        <input type="text" id="domCiudad" class="form-control" maxlength="100" />
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="domLocalidad">Localidad</label>
+                        <input type="text" id="domLocalidad" class="form-control" maxlength="100" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="domProvincia">Provincia</label>
+                        <select id="domProvincia" class="form-control"></select>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="domCodigoPostal">Código Postal</label>
+                        <input type="text" id="domCodigoPostal" class="form-control" maxlength="20" />
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end form-group">
+                        <button type="button" id="btnGuardarDomicilio" class="btn btn-info btn-block">Guardar domicilio</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped" id="domiciliosClienteTable">
+                        <thead>
+                            <tr>
+                                <th>Domicilio</th>
+                                <th>Ciudad</th>
+                                <th>Provincia</th>
+                                <th>CP</th>
+                                <th class="table-actions">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="clienteTelefonosModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary">
+                <h5 class="modal-title">Teléfonos del Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="telClienteId" />
+                <input type="hidden" id="telId" />
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="telNumero">Número</label>
+                        <input type="text" id="telNumero" class="form-control" maxlength="50" />
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="telTipo">Tipo</label>
+                        <select id="telTipo" class="form-control">
+                            <option value="Fijo">Fijo</option>
+                            <option value="Celular">Celular</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end form-group">
+                        <button type="button" id="btnGuardarTelefono" class="btn btn-secondary btn-block">Guardar teléfono</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped" id="telefonosClienteTable">
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Tipo</th>
+                                <th class="table-actions">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="clienteEmailsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Emails del Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="emailClienteId" />
+                <input type="hidden" id="emailId" />
+
+                <div class="row">
+                    <div class="col-md-9 form-group">
+                        <label for="emailValor">Email</label>
+                        <input type="email" id="emailValor" class="form-control" maxlength="254" />
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end form-group">
+                        <button type="button" id="btnGuardarEmail" class="btn btn-warning btn-block">Guardar email</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped" id="emailsClienteTable">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th class="table-actions">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/views/clientes.index.js" asp-append-version="true"></script>
+}

@@ -56,9 +56,7 @@ public class ProveedorService : IProveedorService
             Codigo = request.Codigo,
             RazonSocial = request.RazonSocial,
             NombreFantasia = request.NombreFantasia,
-            CUIT = request.CUIT,
-            Email = request.Email,
-            Telefono = request.Telefono,
+            CUIT = request.Cuit,
             IdCondicionPago = request.IdCondicionPago,
             Observaciones = request.Observaciones,
             Activo = true,
@@ -94,9 +92,7 @@ public class ProveedorService : IProveedorService
         proveedor.Codigo = request.Codigo;
         proveedor.RazonSocial = request.RazonSocial;
         proveedor.NombreFantasia = request.NombreFantasia;
-        proveedor.CUIT = request.CUIT;
-        proveedor.Email = request.Email;
-        proveedor.Telefono = request.Telefono;
+        proveedor.CUIT = request.Cuit;
         proveedor.IdCondicionPago = request.IdCondicionPago;
         proveedor.Observaciones = request.Observaciones;
         proveedor.Activo = request.Activo;
