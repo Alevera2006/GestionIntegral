@@ -22,6 +22,13 @@ public class StockController : BaseController
         return Result(response);
     }
 
+    [HttpGet("filtrar")]
+    public async Task<IActionResult> GetByFilter([FromQuery] StockFiltroRequestDto filtro, CancellationToken cancellationToken)
+    {
+        var response = await _stockService.ObtenerPorFiltroAsync(filtro, cancellationToken);
+        return Result(response);
+    }
+
     [HttpGet("{id:long}")]
     public async Task<IActionResult> GetById(long id, CancellationToken cancellationToken)
     {

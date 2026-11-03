@@ -35,7 +35,7 @@ public class ListaPrecioDetalleConfiguration : IEntityTypeConfiguration<ListaPre
 
         builder.Property(e => e.FechaCreacion)
             .HasColumnName("FechaCreacion")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .IsRequired();
 
         builder.Property(e => e.IdUsuarioUltimaModificacion)
@@ -43,7 +43,7 @@ public class ListaPrecioDetalleConfiguration : IEntityTypeConfiguration<ListaPre
 
         builder.Property(e => e.FechaUltimaModificacion)
             .HasColumnName("FechaUltimaModificacion")
-            .HasColumnType("datetime2");
+            .HasColumnType("datetime2(3)");
 
         builder.HasIndex(e => new { e.IdListaPrecio, e.IdProducto })
             .IsUnique()

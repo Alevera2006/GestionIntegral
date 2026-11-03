@@ -12,5 +12,6 @@ public class Contacto : EntityBase
     public bool Activo { get; set; } = true;
 
     public virtual Usuario UsuarioCreacion { get; set; } = null!;
+    public virtual Usuario? UsuarioModificacion { get; set; }
     public virtual ICollection<ClienteContacto> ClienteContactos { get; set; } = new List<ClienteContacto>();
 }

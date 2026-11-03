@@ -8,6 +8,8 @@ public interface IMovimientoStockService
     Task<BaseResponseDto<IEnumerable<MovimientoStockResponseDto>>> ObtenerTodosAsync(CancellationToken cancellationToken = default);
     Task<BaseResponseDto<MovimientoStockResponseDto>> ObtenerPorIdAsync(long id, CancellationToken cancellationToken = default);
     Task<BaseResponseDto<MovimientoStockResponseDto>> CrearAsync(CrearMovimientoStockRequestDto request, CancellationToken cancellationToken = default);
+    Task<BaseResponseDto<MovimientoStockResponseDto>> CrearConDetallesAsync(CrearMovimientoStockConDetallesRequestDto request, CancellationToken cancellationToken = default);
     Task<BaseResponseDto<MovimientoStockResponseDto>> ActualizarAsync(ActualizarMovimientoStockRequestDto request, CancellationToken cancellationToken = default);
     Task<BaseResponseDto<bool>> EliminarAsync(long id, CancellationToken cancellationToken = default);
+    Task<BaseResponseDto<IEnumerable<HistorialStockPorProductoResponseDto>>> ObtenerHistorialPorProductoAsync(int idProducto, int? idDeposito, CancellationToken cancellationToken = default);
 }

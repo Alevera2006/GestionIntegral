@@ -57,6 +57,10 @@ public static class ServiceExtensions
         services.AddScoped<IDomicilioService, DomicilioService>();
         services.AddScoped<ITelefonoService, TelefonoService>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IFacturaService, FacturaService>();
+        services.AddScoped<ICuentaCorrienteService, CuentaCorrienteService>();
+        services.AddScoped<IValorCarteraService, ValorCarteraService>();
+        services.AddScoped<IPagoProveedorService, PagoProveedorService>();
 
         return services;
     }

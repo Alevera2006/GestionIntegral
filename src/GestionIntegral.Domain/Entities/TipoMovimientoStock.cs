@@ -9,5 +9,6 @@ public class TipoMovimientoStock : EntityBase
     public bool Activo { get; set; } = true;
 
     public virtual Usuario UsuarioCreacion { get; set; } = null!;
+    public virtual Usuario? UsuarioModificacion { get; set; }
     public virtual ICollection<MovimientoStock> MovimientosStock { get; set; } = new List<MovimientoStock>();
 }

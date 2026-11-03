@@ -5,47 +5,29 @@
 <partial name="_Alerts" />
 
 <div class="row">
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-        <div class="small-box">
+    <div class="col-auto">
+        <div class="small-box bg-info">
             <div class="inner">
-                <h3>Usuarios</h3>
+                <h3>&nbsp;</h3>
+                <p>Usuarios</p>
             </div>
-            <a asp-controller="Usuarios" asp-action="Index" class="small-box-footer">
-                Administrar <i class="fas fa-users tarjeta-icono-footer"></i>
-            </a>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <a asp-controller="Usuarios" asp-action="Index" class="small-box-footer">Administrar <i class="fas fa-arrow-circle-right ml-1"></i></a>
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-        <div class="small-box">
+    <div class="col-auto">
+        <div class="small-box bg-warning">
             <div class="inner">
-                <h3>Tipos de Usuario</h3>
+                <h3>&nbsp;</h3>
+                <p>Tipos de Usuario</p>
             </div>
-            <a asp-controller="TiposUsuario" asp-action="Index" class="small-box-footer">
-                Administrar <i class="fas fa-user-tag tarjeta-icono-footer"></i>
-            </a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-        <div class="small-box">
-            <div class="inner">
-                <h3>Clientes</h3>
+            <div class="icon">
+                <i class="fas fa-user-tag"></i>
             </div>
-            <a asp-controller="Clientes" asp-action="Index" class="small-box-footer">
-                Administrar <i class="fas fa-user-friends tarjeta-icono-footer"></i>
-            </a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-        <div class="small-box">
-            <div class="inner">
-                <h3>Proveedores</h3>
-            </div>
-            <a asp-controller="Proveedores" asp-action="Index" class="small-box-footer">
-                Administrar <i class="fas fa-truck tarjeta-icono-footer"></i>
-            </a>
+            <a asp-controller="TiposUsuario" asp-action="Index" class="small-box-footer">Administrar <i class="fas fa-arrow-circle-right ml-1"></i></a>
         </div>
     </div>
 </div>

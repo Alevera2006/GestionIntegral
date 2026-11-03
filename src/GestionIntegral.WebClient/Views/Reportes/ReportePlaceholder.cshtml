@@ -1,0 +1,20 @@
+@model (string Titulo, string Descripcion)
+@{
+    ViewData["Title"] = Model.Titulo;
+}
+
+<div class="row mb-3">
+    <div class="col-12">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left mr-1"></i> Volver</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary">
+        <h3 class="card-title"><i class="fas fa-file-alt mr-2"></i> @Model.Titulo</h3>
+    </div>
+    <div class="card-body">
+        <p class="text-muted">@Model.Descripcion</p>
+        <p>Este reporte está en desarrollo. Próximamente podrás visualizarlo y exportarlo.</p>
+    </div>
+</div>

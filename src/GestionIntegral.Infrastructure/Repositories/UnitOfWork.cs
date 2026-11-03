@@ -43,6 +43,10 @@ public class UnitOfWork : IUnitOfWork
     public IDomicilioRepository Domicilios { get; }
     public ITelefonoRepository Telefonos { get; }
     public IEmailRepository Emails { get; }
+    public IFacturaRepository Facturas { get; }
+    public IPagoClienteRepository PagosClientes { get; }
+    public IValorCarteraRepository ValoresCartera { get; }
+    public IPagoProveedorRepository PagosProveedores { get; }
 
     public UnitOfWork(GestionIntegralDbContext context)
     {
@@ -83,6 +87,10 @@ public class UnitOfWork : IUnitOfWork
         Domicilios = new DomicilioRepository(context);
         Telefonos = new TelefonoRepository(context);
         Emails = new EmailRepository(context);
+        Facturas = new FacturaRepository(context);
+        PagosClientes = new PagoClienteRepository(context);
+        ValoresCartera = new ValorCarteraRepository(context);
+        PagosProveedores = new PagoProveedorRepository(context);
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

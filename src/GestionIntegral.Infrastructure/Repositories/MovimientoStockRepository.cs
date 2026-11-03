@@ -7,4 +7,9 @@ namespace GestionIntegral.Infrastructure.Repositories;
 public class MovimientoStockRepository : Repository<MovimientoStock>, IMovimientoStockRepository
 {
     public MovimientoStockRepository(GestionIntegralDbContext context) : base(context) { }
+
+    public async Task<MovimientoStock?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
+    }
 }

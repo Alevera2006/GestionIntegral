@@ -19,13 +19,11 @@
     };
 
     const first = (value, fallback = '') => (value === null || value === undefined ? fallback : value);
-
     const toBoolText = value => value ? 'Sí' : 'No';
 
     const loadCondiciones = async () => {
         const res = await $.getJSON('/Proveedores/CondicionesPago');
         state.condiciones = res?.datos ?? res?.Datos ?? [];
-
         const $sel = $('#proveedorCondicionPago');
         $sel.empty().append('<option value="">-- Sin condición --</option>');
         state.condiciones.forEach(c => {
@@ -38,7 +36,6 @@
     const loadProvincias = async () => {
         const res = await $.getJSON('/Proveedores/Provincias');
         state.provincias = res?.datos ?? res?.Datos ?? [];
-
         const $sel = $('#domProvProvincia');
         $sel.empty().append('<option value="">-- Seleccione --</option>');
         state.provincias.forEach(p => {
@@ -54,7 +51,6 @@
             notify('error', res?.mensaje ?? res?.Mensaje ?? 'No se pudieron cargar proveedores.');
             return;
         }
-
         state.proveedores = res?.datos ?? res?.Datos ?? [];
         renderProveedores();
     };
@@ -63,7 +59,22 @@
         const $tb = $('#proveedorTable tbody');
         $tb.empty();
 
-        state.proveedores.forEach(p => {
+        const filtro = ($('#proveedorFiltro').val() || '').toString().trim().toLowerCase();
+        const visibles = state.proveedores.filter(p => {
+            if (!filtro) return true;
+            const codigo = (p.codigo ?? p.Codigo ?? '').toString().toLowerCase();
+            const razon = (p.razonSocial ?? p.RazonSocial ?? '').toString().toLowerCase();
+            const cuit = (p.cuit ?? p.Cuit ?? '').toString().toLowerCase();
+            const condicion = (p.condicionPagoDescripcion ?? p.CondicionPagoDescripcion ?? '').toString().toLowerCase();
+            return codigo.includes(filtro) || razon.includes(filtro) || cuit.includes(filtro) || condicion.includes(filtro);
+        });
+
+        if (!visibles.length) {
+            $tb.html('<tr><td colspan="6" class="text-center text-muted">No hay proveedores para el filtro aplicado.</td></tr>');
+            return;
+        }
+
+        visibles.forEach(p => {
             const id = p.idProveedor ?? p.IdProveedor;
             const codigo = p.codigo ?? p.Codigo;
             const razon = p.razonSocial ?? p.RazonSocial;
@@ -106,6 +117,8 @@
         $('#proveedorCondicionPago').val('');
         $('#proveedorObservaciones').val('');
         $('#proveedorActivo').prop('checked', true);
+        $('#proveedorFormTitle').text('Nuevo Proveedor');
+        $('#proveedorContactButtons').hide();
         toggleProveedorContactButtons(0);
     };
 
@@ -150,6 +163,7 @@
         }
 
         notify('success', 'Proveedor guardado correctamente.');
+        $('#proveedorFormModal').modal('hide');
         clearProveedorForm();
         await loadProveedores();
     };
@@ -166,7 +180,15 @@
         $('#proveedorCondicionPago').val(first(p.idCondicionPago ?? p.IdCondicionPago, ''));
         $('#proveedorObservaciones').val(first(p.observaciones ?? p.Observaciones));
         $('#proveedorActivo').prop('checked', !!(p.activo ?? p.Activo));
+        $('#proveedorFormTitle').text('Editar Proveedor');
+        $('#proveedorContactButtons').show();
         toggleProveedorContactButtons(id);
+        $('#proveedorFormModal').modal('show');
+    };
+
+    const nuevoProveedor = () => {
+        clearProveedorForm();
+        $('#proveedorFormModal').modal('show');
     };
 
     const deleteProveedor = async id => {
@@ -296,6 +318,7 @@
         const res = await $.getJSON(`/Proveedores/ListarTelefonos?idProveedor=${idProveedor}`);
         const list = res?.datos ?? res?.Datos ?? [];
         state.telefonos = list;
+
         const $tb = $('#telefonosProveedorTable tbody');
         $tb.empty();
 
@@ -383,6 +406,7 @@
         const res = await $.getJSON(`/Proveedores/ListarEmails?idProveedor=${idProveedor}`);
         const list = res?.datos ?? res?.Datos ?? [];
         state.emails = list;
+
         const $tb = $('#emailsProveedorTable tbody');
         $tb.empty();
 
@@ -407,8 +431,7 @@
         const id = Number($('#emailProvId').val() || 0);
 
         const payload = {
-            tipoReferencia: 'P',
-            idReferencia: idProveedor,
+            idProveedor,
             email: $('#emailProvValor').val()?.trim()
         };
 
@@ -460,14 +483,15 @@
     };
 
     const bindEvents = () => {
-        $('#btnAbrirProveedores').on('click', async () => {
-            $('#proveedorModal').modal('show');
-            clearProveedorForm();
-            await Promise.all([loadCondiciones(), loadProvincias(), loadProveedores()]);
-        });
+        Promise.all([loadCondiciones(), loadProvincias(), loadProveedores()]);
 
-        $('#btnNuevoProveedor').on('click', clearProveedorForm);
+        $('#proveedorFiltro').on('input', renderProveedores);
+        $('#btnNuevoProveedor').on('click', nuevoProveedor);
         $('#proveedorForm').on('submit', saveProveedor);
+
+        $('#proveedorFormModal').on('hidden.bs.modal', () => {
+            clearProveedorForm();
+        });
 
         $('#proveedorTable').on('click', '.btn-editar', function () {
             editProveedor(Number($(this).data('id')));

@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Movimientos de Stock";
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title mb-0"><i class="fas fa-dolly mr-2"></i> Movimientos de Stock</h3>
+        <a href="/Stock/NuevoMovimiento" class="btn btn-success btn-sm">
+            <i class="fas fa-plus mr-1"></i> Nuevo Movimiento
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover" id="movimientosTable">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Depósito</th>
+                        <th>Tipo</th>
+                        <th>Responsable</th>
+                        <th>Referencia</th>
+                        <th>Productos</th>
+                        <th class="table-actions">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="7" class="text-center text-muted">Cargando...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/views/stock.movimientos.js" asp-append-version="true"></script>
+}

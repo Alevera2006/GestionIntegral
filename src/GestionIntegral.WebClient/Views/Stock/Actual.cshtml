@@ -1,0 +1,93 @@
+@{
+    ViewData["Title"] = "Stock Actual";
+    var depositos = ViewBag.Depositos as List<GestionIntegral.WebClient.Models.Stock.DepositoResponseDto> ?? new();
+    var categorias = ViewBag.Categorias as List<GestionIntegral.WebClient.Models.Stock.CategoriaResponseDto> ?? new();
+    var subcategorias = ViewBag.SubCategorias as List<GestionIntegral.WebClient.Models.Stock.SubCategoriaResponseDto> ?? new();
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-boxes mr-2"></i> Stock Actual</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="filtroDeposito">Depósito</label>
+                    <select id="filtroDeposito" class="form-control">
+                        <option value="">Todos</option>
+                        @foreach (var dep in depositos)
+                        {
+                            <option value="@dep.IdDeposito">@dep.Descripcion</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="filtroCategoria">Categoría</label>
+                    <select id="filtroCategoria" class="form-control">
+                        <option value="">Todas</option>
+                        @foreach (var cat in categorias)
+                        {
+                            <option value="@cat.IdCategoria">@cat.Descripcion</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="filtroSubCategoria">Subcategoría</label>
+                    <select id="filtroSubCategoria" class="form-control">
+                        <option value="">Todas</option>
+                        @foreach (var sub in subcategorias)
+                        {
+                            <option value="@sub.IdSubCategoria" data-categoria="@sub.IdCategoria">@sub.Descripcion</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="filtroBusqueda">Producto</label>
+                    <input type="text" id="filtroBusqueda" class="form-control" placeholder="Código o descripción" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="button" id="btnBuscarStock" class="btn btn-primary">
+                    <i class="fas fa-search mr-1"></i> Buscar
+                </button>
+                <button type="button" id="btnLimpiarStock" class="btn btn-secondary">
+                    <i class="fas fa-broom mr-1"></i> Limpiar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover" id="stockTable">
+                <thead>
+                    <tr>
+                        <th>Depósito</th>
+                        <th>Código</th>
+                        <th>Producto</th>
+                        <th class="text-right">Cantidad</th>
+                        <th>Último Movimiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5" class="text-center text-muted">Presione Buscar para cargar el stock.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/views/stock.actual.js" asp-append-version="true"></script>
+}

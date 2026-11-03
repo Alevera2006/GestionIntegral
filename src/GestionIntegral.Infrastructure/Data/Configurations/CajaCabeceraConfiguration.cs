@@ -41,13 +41,13 @@ public class CajaCabeceraConfiguration : IEntityTypeConfiguration<CajaCabecera>
 
         builder.Property(e => e.FechaApertura)
             .HasColumnName("FechaApertura")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .HasDefaultValueSql("SYSUTCDATETIME()")
             .IsRequired();
 
         builder.Property(e => e.FechaCierre)
             .HasColumnName("FechaCierre")
-            .HasColumnType("datetime2");
+            .HasColumnType("datetime2(3)");
 
         builder.Property(e => e.Observaciones)
             .HasColumnName("Observaciones")
@@ -59,8 +59,15 @@ public class CajaCabeceraConfiguration : IEntityTypeConfiguration<CajaCabecera>
 
         builder.Property(e => e.FechaCreacion)
             .HasColumnName("FechaCreacion")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .IsRequired();
+
+        builder.Property(e => e.IdUsuarioUltimaModificacion)
+            .HasColumnName("IdUsuarioUltimaModificacion");
+
+        builder.Property(e => e.FechaUltimaModificacion)
+            .HasColumnName("FechaUltimaModificacion")
+            .HasColumnType("datetime2(3)");
 
         builder.HasOne(e => e.UsuarioResponsable)
             .WithMany()
@@ -78,6 +85,12 @@ public class CajaCabeceraConfiguration : IEntityTypeConfiguration<CajaCabecera>
             .WithMany()
             .HasForeignKey(e => e.IdUsuarioCreacion)
             .HasConstraintName("FK_CajaCabecera_UsuarioCreacion")
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(e => e.UsuarioModificacion)
+            .WithMany()
+            .HasForeignKey(e => e.IdUsuarioUltimaModificacion)
+            .HasConstraintName("FK_CajaCabecera_UsuarioModificacion")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

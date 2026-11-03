@@ -1,0 +1,32 @@
+@model IEnumerable<GestionIntegral.WebClient.Models.Stock.OpcionStockViewModel>
+@{
+    ViewData["Title"] = "Reportes de Stock";
+}
+
+<div class="row mb-3">
+    <div class="col-12">
+        <a href="/Reportes" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left mr-1"></i> Volver a Reportes</a>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var opcion in Model)
+    {
+        <div class="col-auto">
+            <a href="@opcion.Url" class="text-decoration-none">
+                <div class="small-box @opcion.Color">
+                    <div class="inner">
+                        <h3>&nbsp;</h3>
+                        <p>@opcion.Titulo</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas @opcion.Icono"></i>
+                    </div>
+                    <span class="small-box-footer">
+                        Ver reporte <i class="fas fa-arrow-circle-right ml-1"></i>
+                    </span>
+                </div>
+            </a>
+        </div>
+    }
+</div>

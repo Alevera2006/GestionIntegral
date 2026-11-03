@@ -60,6 +60,10 @@ public static class ServiceExtensions
         services.AddScoped<IDomicilioRepository, DomicilioRepository>();
         services.AddScoped<ITelefonoRepository, TelefonoRepository>();
         services.AddScoped<IEmailRepository, EmailRepository>();
+        services.AddScoped<IFacturaRepository, FacturaRepository>();
+        services.AddScoped<IPagoClienteRepository, PagoClienteRepository>();
+        services.AddScoped<IValorCarteraRepository, ValorCarteraRepository>();
+        services.AddScoped<IPagoProveedorRepository, PagoProveedorRepository>();
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPasswordService, PasswordService>();

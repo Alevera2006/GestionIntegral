@@ -52,13 +52,26 @@ public class ContactoConfiguration : IEntityTypeConfiguration<Contacto>
 
         builder.Property(e => e.FechaCreacion)
             .HasColumnName("FechaCreacion")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .IsRequired();
+
+        builder.Property(e => e.IdUsuarioUltimaModificacion)
+            .HasColumnName("IdUsuarioUltimaModificacion");
+
+        builder.Property(e => e.FechaUltimaModificacion)
+            .HasColumnName("FechaUltimaModificacion")
+            .HasColumnType("datetime2(3)");
 
         builder.HasOne(e => e.UsuarioCreacion)
             .WithMany()
             .HasForeignKey(e => e.IdUsuarioCreacion)
-            .HasConstraintName("FK_Contactos_Usuarios")
+            .HasConstraintName("FK_Contactos_UsuariosCreacion")
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(e => e.UsuarioModificacion)
+            .WithMany()
+            .HasForeignKey(e => e.IdUsuarioUltimaModificacion)
+            .HasConstraintName("FK_Contactos_UsuariosModificacion")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

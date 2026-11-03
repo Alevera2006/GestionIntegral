@@ -17,4 +17,5 @@ public class CajaDetalle : EntityBase
     public virtual MedioPago? MedioPago { get; set; }
     public virtual Moneda? Moneda { get; set; }
     public virtual Usuario UsuarioCreacion { get; set; } = null!;
+    public virtual Usuario? UsuarioModificacion { get; set; }
 }

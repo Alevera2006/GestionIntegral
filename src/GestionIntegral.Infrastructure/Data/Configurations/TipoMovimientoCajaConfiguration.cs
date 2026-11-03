@@ -41,8 +41,15 @@ public class TipoMovimientoCajaConfiguration : IEntityTypeConfiguration<TipoMovi
 
         builder.Property(e => e.FechaCreacion)
             .HasColumnName("FechaCreacion")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .IsRequired();
+
+        builder.Property(e => e.IdUsuarioUltimaModificacion)
+            .HasColumnName("IdUsuarioUltimaModificacion");
+
+        builder.Property(e => e.FechaUltimaModificacion)
+            .HasColumnName("FechaUltimaModificacion")
+            .HasColumnType("datetime2(3)");
 
         builder.HasIndex(e => e.Codigo)
             .IsUnique()
@@ -51,7 +58,13 @@ public class TipoMovimientoCajaConfiguration : IEntityTypeConfiguration<TipoMovi
         builder.HasOne(e => e.UsuarioCreacion)
             .WithMany()
             .HasForeignKey(e => e.IdUsuarioCreacion)
-            .HasConstraintName("FK_TiposMovimientoCaja_Usuarios")
+            .HasConstraintName("FK_TiposMovimientoCaja_UsuariosCreacion")
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(e => e.UsuarioModificacion)
+            .WithMany()
+            .HasForeignKey(e => e.IdUsuarioUltimaModificacion)
+            .HasConstraintName("FK_TiposMovimientoCaja_UsuariosModificacion")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -6,6 +6,7 @@ namespace GestionIntegral.Application.Interfaces.Services;
 public interface IStockService
 {
     Task<BaseResponseDto<IEnumerable<StockResponseDto>>> ObtenerTodosAsync(CancellationToken cancellationToken = default);
+    Task<BaseResponseDto<IEnumerable<StockResponseDto>>> ObtenerPorFiltroAsync(StockFiltroRequestDto filtro, CancellationToken cancellationToken = default);
     Task<BaseResponseDto<StockResponseDto>> ObtenerPorIdAsync(long id, CancellationToken cancellationToken = default);
     Task<BaseResponseDto<StockResponseDto>> CrearAsync(CrearStockRequestDto request, CancellationToken cancellationToken = default);
     Task<BaseResponseDto<StockResponseDto>> ActualizarAsync(ActualizarStockRequestDto request, CancellationToken cancellationToken = default);

@@ -142,7 +142,7 @@ BEGIN TRY
                 CONSTRAINT DF_Usuarios_Activo
                 DEFAULT (1),
 
-            IdUsuarioCreacion INT NULL,
+            IdUsuarioCreacion INT NOT NULL,
 
             FechaCreacion DATETIME2(3) NOT NULL
                 CONSTRAINT DF_Usuarios_FechaCreacion
@@ -418,9 +418,12 @@ CREATE TABLE Contactos
     Email                 VARCHAR(150) NULL,
 
     Activo                BIT NOT NULL DEFAULT 1,
+    FechaBaja             DATETIME2 NULL,
 
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_Contactos
         PRIMARY KEY (IdContacto),
@@ -434,6 +437,11 @@ CREATE TABLE ClienteContactos
     IdCliente             INT NOT NULL,
     IdContacto            INT NOT NULL,
     EsPrincipal           BIT NOT NULL DEFAULT 0,
+
+    IdUsuarioCreacion     INT NOT NULL,
+    FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_ClienteContactos
         PRIMARY KEY (IdCliente, IdContacto),
@@ -1081,6 +1089,7 @@ CREATE TABLE Monedas
         CONSTRAINT DF_Monedas_CantidadDecimales DEFAULT 2,
     Activo               BIT NOT NULL
         CONSTRAINT DF_Monedas_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
         CONSTRAINT DF_Monedas_FechaCreacion
@@ -1116,6 +1125,7 @@ CREATE TABLE MediosPago
 
     Activo               BIT NOT NULL
         CONSTRAINT DF_MediosPago_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
@@ -1143,6 +1153,7 @@ CREATE TABLE TiposMovimientoCaja
     Signo                SMALLINT NOT NULL,
     Activo               BIT NOT NULL
         CONSTRAINT DF_TiposMovimientoCaja_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
@@ -1172,6 +1183,7 @@ CREATE TABLE EstadosCaja
     Descripcion          VARCHAR(100) NOT NULL,
     Activo               BIT NOT NULL
         CONSTRAINT DF_EstadosCaja_Activo DEFAULT 1,
+    FechaBaja            DATETIME2 NULL,
 
     IdUsuarioCreacion    INT NOT NULL,
     FechaCreacion        DATETIME2 NOT NULL
@@ -1203,6 +1215,8 @@ CREATE TABLE CajaCabecera (
     [Observaciones]        VARCHAR (500)   NULL,
     [IdUsuarioCreacion]    INT             NOT NULL,
     [FechaCreacion]        DATETIME2 (7)   DEFAULT (sysutcdatetime()) NOT NULL,
+    [IdUsuarioUltimaModificacion] INT        NULL,
+    [FechaUltimaModificacion] DATETIME2 (7)  NULL,
     CONSTRAINT [PK_CajaCabecera] PRIMARY KEY CLUSTERED ([IdCaja] ASC),
     CONSTRAINT [FK_CajaCabecera_Responsable] FOREIGN KEY ([IdUsuarioResponsable]) REFERENCES [dbo].[Usuarios] ([IdUsuario]),
     CONSTRAINT [FK_CajaCabecera_Estado] FOREIGN KEY ([IdEstadoCaja]) REFERENCES [dbo].[EstadosCaja] ([IdEstadoCaja]),
@@ -1226,6 +1240,8 @@ CREATE TABLE CajaDetalle
 
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_CajaDetalle
         PRIMARY KEY (IdCajaDetalle),
@@ -1261,6 +1277,7 @@ CREATE TABLE Depositos
     Ubicacion             VARCHAR(200) NULL,
     Activo                BIT NOT NULL
         CONSTRAINT DF_Depositos_Activo DEFAULT 1,
+    FechaBaja             DATETIME2 NULL,
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL
         CONSTRAINT DF_Depositos_FechaCreacion
@@ -1289,6 +1306,7 @@ CREATE TABLE TiposMovimientoStock
 
     Activo                BIT NOT NULL
         CONSTRAINT DF_TiposMovimientoStock_Activo DEFAULT 1,
+    FechaBaja             DATETIME2 NULL,
 
     IdUsuarioCreacion     INT NOT NULL,
     FechaCreacion         DATETIME2 NOT NULL
@@ -1319,6 +1337,10 @@ CREATE TABLE Stock
     Cantidad              DECIMAL(18,4) NOT NULL
         CONSTRAINT DF_Stock_Cantidad DEFAULT 0,
     FechaUltimoMovimiento DATETIME2 NULL,
+    IdUsuarioCreacion     INT NOT NULL,
+    FechaCreacion         DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_Stock
         PRIMARY KEY (IdStock),
@@ -1354,6 +1376,8 @@ CREATE TABLE MovimientosStock
     FechaCreacion         DATETIME2 NOT NULL
         CONSTRAINT DF_MovimientosStock_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_MovimientosStock
         PRIMARY KEY (IdMovimientoStock),
@@ -1387,6 +1411,8 @@ CREATE TABLE MovimientoStockDetalle
     FechaCreacion            DATETIME2 NOT NULL
         CONSTRAINT DF_MovimientoStockDetalle_FechaCreacion
         DEFAULT SYSUTCDATETIME(),
+    IdUsuarioUltimaModificacion INT NULL,
+    FechaUltimaModificacion DATETIME2 NULL,
 
     CONSTRAINT PK_MovimientoStockDetalle
         PRIMARY KEY (IdMovimientoStockDetalle),
@@ -1739,3 +1765,10 @@ CREATE TABLE dbo.Emails (
 	CONSTRAINT FK_Emails_UsuariosModificacion FOREIGN KEY (IdUsuarioUltimaModificacion) REFERENCES dbo.Usuarios(IdUsuario)
 );
 CREATE INDEX IX_Emails_TipoReferencia_IdReferencia ON dbo.Emails(TipoReferencia, IdReferencia);
+
+
+select * from dbo.MovimientosStock
+SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'dbo'
+  AND TABLE_NAME = 'MovimientosStock';

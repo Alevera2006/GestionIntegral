@@ -5,7 +5,7 @@
 
 <partial name="_Alerts" />
 
-<div class="btn-group d-flex flex-wrap mb-4" role="group" aria-label="Secciones de parámetros" id="gruposParametros">
+<div class="btn-group d-flex flex-wrap mb-4" role="group" aria-label="Secciones de parámetros" id="gruposParametros" data-grupo-inicial="@ViewBag.GrupoInicial">
     <button type="button" class="btn btn-primary active" data-grupo="parametricos" aria-pressed="true">Paramétricos</button>
     <button type="button" class="btn btn-outline-primary" data-grupo="ventas" aria-pressed="false">Ventas</button>
     <button type="button" class="btn btn-outline-primary" data-grupo="compras" aria-pressed="false">Compras</button>
@@ -16,13 +16,17 @@
 <div class="row" id="tarjetasParametros">
     @foreach (var tarjeta in Model)
     {
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-grupo="@tarjeta.Grupo" hidden="@(tarjeta.Grupo != "parametricos")">
-            <div class="small-box tarjeta-parametro" data-key="@tarjeta.Key" data-api-url="@tarjeta.ApiUrl" data-requiere-afip="@tarjeta.RequiereCodigoAFIP.ToString().ToLower()">
+        <div class="col-auto" data-grupo="@tarjeta.Grupo" hidden="@(tarjeta.Grupo != "parametricos")">
+            <div class="small-box tarjeta-parametro bg-info" data-key="@tarjeta.Key" data-api-url="@tarjeta.ApiUrl" data-requiere-afip="@tarjeta.RequiereCodigoAFIP.ToString().ToLower()">
                 <div class="inner">
-                    <h3>@tarjeta.Titulo</h3>
+                    <h3>&nbsp;</h3>
+                    <p>@tarjeta.Titulo</p>
+                </div>
+                <div class="icon">
+                    <i class="fas @tarjeta.Icono"></i>
                 </div>
                 <button type="button" class="small-box-footer btn-administrar" data-key="@tarjeta.Key">
-                    Administrar <i class="fas @tarjeta.Icono tarjeta-icono-footer"></i>
+                    Administrar <i class="fas fa-arrow-circle-right ml-1"></i>
                 </button>
             </div>
         </div>

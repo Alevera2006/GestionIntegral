@@ -11,7 +11,7 @@ public class ParametrosController : BaseController
     {
     }
 
-    public IActionResult Index()
+    public IActionResult Index(string? grupo)
     {
         var tarjetas = new List<TarjetaParametroViewModel>
         {
@@ -41,6 +41,7 @@ public class ParametrosController : BaseController
             new() { Key = "listasPrecios", Titulo = "Listas de Precios", Icono = "fa-dollar-sign", Grupo = "ventas", ApiUrl = "api/listasprecios", RequiereCodigoAFIP = false }
         };
 
+        ViewBag.GrupoInicial = grupo ?? "parametricos";
         return View(tarjetas);
     }
 

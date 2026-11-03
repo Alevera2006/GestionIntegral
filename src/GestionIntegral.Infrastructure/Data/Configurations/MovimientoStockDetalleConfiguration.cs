@@ -35,8 +35,15 @@ public class MovimientoStockDetalleConfiguration : IEntityTypeConfiguration<Movi
 
         builder.Property(e => e.FechaCreacion)
             .HasColumnName("FechaCreacion")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .IsRequired();
+
+        builder.Property(e => e.IdUsuarioUltimaModificacion)
+            .HasColumnName("IdUsuarioUltimaModificacion");
+
+        builder.Property(e => e.FechaUltimaModificacion)
+            .HasColumnName("FechaUltimaModificacion")
+            .HasColumnType("datetime2(3)");
 
         builder.HasOne(e => e.MovimientoStock)
             .WithMany(m => m.Detalles)
@@ -53,7 +60,13 @@ public class MovimientoStockDetalleConfiguration : IEntityTypeConfiguration<Movi
         builder.HasOne(e => e.UsuarioCreacion)
             .WithMany()
             .HasForeignKey(e => e.IdUsuarioCreacion)
-            .HasConstraintName("FK_MovimientoStockDetalle_Usuario")
+            .HasConstraintName("FK_MovimientoStockDetalle_UsuarioCreacion")
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(e => e.UsuarioModificacion)
+            .WithMany()
+            .HasForeignKey(e => e.IdUsuarioUltimaModificacion)
+            .HasConstraintName("FK_MovimientoStockDetalle_UsuarioModificacion")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

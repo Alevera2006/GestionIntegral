@@ -10,4 +10,5 @@ public class MovimientoStockDetalle : EntityBase
     public virtual MovimientoStock MovimientoStock { get; set; } = null!;
     public virtual Producto Producto { get; set; } = null!;
     public virtual Usuario UsuarioCreacion { get; set; } = null!;
+    public virtual Usuario? UsuarioModificacion { get; set; }
 }

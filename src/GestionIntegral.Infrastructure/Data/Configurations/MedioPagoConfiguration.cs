@@ -47,8 +47,15 @@ public class MedioPagoConfiguration : IEntityTypeConfiguration<MedioPago>
 
         builder.Property(e => e.FechaCreacion)
             .HasColumnName("FechaCreacion")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .IsRequired();
+
+        builder.Property(e => e.IdUsuarioUltimaModificacion)
+            .HasColumnName("IdUsuarioUltimaModificacion");
+
+        builder.Property(e => e.FechaUltimaModificacion)
+            .HasColumnName("FechaUltimaModificacion")
+            .HasColumnType("datetime2(3)");
 
         builder.HasIndex(e => e.Codigo)
             .IsUnique()
@@ -57,7 +64,13 @@ public class MedioPagoConfiguration : IEntityTypeConfiguration<MedioPago>
         builder.HasOne(e => e.UsuarioCreacion)
             .WithMany()
             .HasForeignKey(e => e.IdUsuarioCreacion)
-            .HasConstraintName("FK_MediosPago_Usuarios")
+            .HasConstraintName("FK_MediosPago_UsuariosCreacion")
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(e => e.UsuarioModificacion)
+            .WithMany()
+            .HasForeignKey(e => e.IdUsuarioUltimaModificacion)
+            .HasConstraintName("FK_MediosPago_UsuariosModificacion")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

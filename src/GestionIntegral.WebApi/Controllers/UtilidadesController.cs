@@ -30,6 +30,7 @@ public class UtilidadesController : ControllerBase
     /// <param name="request">Clave a hashear.</param>
     /// <returns>Hash BCrypt de 60 caracteres.</returns>
     [HttpPost("generar-hash")]
+    [AllowAnonymous]
     public IActionResult GenerarHash([FromBody] GenerarHashRequestDto request)
     {
         if (!_environment.IsDevelopment())

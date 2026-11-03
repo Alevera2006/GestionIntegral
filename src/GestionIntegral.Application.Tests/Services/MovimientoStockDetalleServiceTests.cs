@@ -38,7 +38,8 @@ public class MovimientoStockDetalleServiceTests
     public async Task CrearAsync_CantidadNoValida_LanzaBusinessException()
     {
         var request = new CrearMovimientoStockDetalleRequestDto { IdMovimientoStock = 1, IdProducto = 2, Cantidad = 0 };
-        _unitOfWorkMock.Setup(u => u.MovimientosStock.GetByIdAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(new MovimientoStock { IdMovimientoStock = 1 });
+        _unitOfWorkMock.Setup(u => u.MovimientosStock.GetByIdAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(new MovimientoStock { IdMovimientoStock = 1, IdTipoMovimientoStock = 1 });
+        _unitOfWorkMock.Setup(u => u.TiposMovimientoStock.GetByIdAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(new TipoMovimientoStock { IdTipoMovimientoStock = 1, Signo = 1 });
         _unitOfWorkMock.Setup(u => u.Productos.GetByIdAsync(2, It.IsAny<CancellationToken>())).ReturnsAsync(new Producto { IdProducto = 2 });
 
         Func<Task> act = async () => await _service.CrearAsync(request);
@@ -50,10 +51,14 @@ public class MovimientoStockDetalleServiceTests
     public async Task CrearAsync_DatosValidos_CreaDetalle()
     {
         var request = new CrearMovimientoStockDetalleRequestDto { IdMovimientoStock = 1, IdProducto = 2, Cantidad = 3 };
-        _unitOfWorkMock.Setup(u => u.MovimientosStock.GetByIdAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(new MovimientoStock { IdMovimientoStock = 1 });
+        _unitOfWorkMock.Setup(u => u.MovimientosStock.GetByIdAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(new MovimientoStock { IdMovimientoStock = 1, IdTipoMovimientoStock = 1, IdDeposito = 1 });
+        _unitOfWorkMock.Setup(u => u.TiposMovimientoStock.GetByIdAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(new TipoMovimientoStock { IdTipoMovimientoStock = 1, Signo = 1 });
         _unitOfWorkMock.Setup(u => u.Productos.GetByIdAsync(2, It.IsAny<CancellationToken>())).ReturnsAsync(new Producto { IdProducto = 2 });
         _unitOfWorkMock.Setup(u => u.MovimientoStockDetalle.AddAsync(It.IsAny<MovimientoStockDetalle>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((MovimientoStockDetalle entity, CancellationToken _) => entity);
+        _unitOfWorkMock.Setup(u => u.Stock.GetByDepositoProductoTrackedAsync(1, 2, It.IsAny<CancellationToken>())).ReturnsAsync((Stock?)null);
+        _unitOfWorkMock.Setup(u => u.Stock.AddAsync(It.IsAny<Stock>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Stock entity, CancellationToken _) => entity);
 
         var result = await _service.CrearAsync(request);
 

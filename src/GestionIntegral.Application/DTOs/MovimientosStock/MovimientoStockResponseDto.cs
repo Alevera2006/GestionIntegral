@@ -12,4 +12,5 @@ public class MovimientoStockResponseDto
     public string NombreUsuarioResponsable { get; set; } = string.Empty;
     public string? Referencia { get; set; }
     public string? Observaciones { get; set; }
+    public List<MovimientoStockDetalleResponseDto> Detalles { get; set; } = new();
 }

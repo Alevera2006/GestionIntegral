@@ -43,6 +43,11 @@ public class GestionIntegralDbContext : DbContext
     public DbSet<Domicilio> Domicilios => Set<Domicilio>();
     public DbSet<Telefono> Telefonos => Set<Telefono>();
     public DbSet<Email> Emails => Set<Email>();
+    public DbSet<Factura> Facturas => Set<Factura>();
+    public DbSet<FacturaDetalle> FacturasDetalle => Set<FacturaDetalle>();
+    public DbSet<PagoCliente> PagosClientes => Set<PagoCliente>();
+    public DbSet<ValorCartera> ValoresCartera => Set<ValorCartera>();
+    public DbSet<PagoProveedor> PagosProveedores => Set<PagoProveedor>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

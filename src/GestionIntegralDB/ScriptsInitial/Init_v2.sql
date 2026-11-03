@@ -45,8 +45,48 @@ IF OBJECT_ID('dbo.Categorias', 'U') IS NOT NULL DROP TABLE dbo.Categorias;
 IF OBJECT_ID('dbo.Proveedores', 'U') IS NOT NULL DROP TABLE dbo.Proveedores;
 IF OBJECT_ID('dbo.Clientes', 'U') IS NOT NULL DROP TABLE dbo.Clientes;
 IF OBJECT_ID('dbo.CondicionesPago', 'U') IS NOT NULL DROP TABLE dbo.CondicionesPago;
-IF OBJECT_ID('dbo.Usuarios', 'U') IS NOT NULL DROP TABLE dbo.Usuarios;
-IF OBJECT_ID('dbo.TiposUsuario', 'U') IS NOT NULL DROP TABLE dbo.TiposUsuario;
+
+BEGIN TRY
+    BEGIN TRANSACTION;
+
+    DECLARE @Sql NVARCHAR(MAX) = N'';
+
+    -- 1. Eliminar todas las FKs que referencian a Usuarios
+    SELECT @Sql += N'ALTER TABLE ' + QUOTENAME(OBJECT_SCHEMA_NAME(parent_object_id))
+                + N'.' + QUOTENAME(OBJECT_NAME(parent_object_id))
+                + N' DROP CONSTRAINT ' + QUOTENAME(name) + N';' + CHAR(13)
+    FROM sys.foreign_keys
+    WHERE referenced_object_id = OBJECT_ID('dbo.Usuarios');
+
+    -- 2. Eliminar todas las FKs que referencian a TiposUsuario
+    SELECT @Sql += N'ALTER TABLE ' + QUOTENAME(OBJECT_SCHEMA_NAME(parent_object_id))
+                + N'.' + QUOTENAME(OBJECT_NAME(parent_object_id))
+                + N' DROP CONSTRAINT ' + QUOTENAME(name) + N';' + CHAR(13)
+    FROM sys.foreign_keys
+    WHERE referenced_object_id = OBJECT_ID('dbo.TiposUsuario');
+
+    IF LEN(@Sql) > 0
+        EXEC sp_executesql @Sql;
+
+    -- 3. Borrar las tablas
+    IF OBJECT_ID('dbo.Usuarios', 'U') IS NOT NULL
+        DROP TABLE dbo.Usuarios;
+
+    IF OBJECT_ID('dbo.TiposUsuario', 'U') IS NOT NULL
+        DROP TABLE dbo.TiposUsuario;
+
+    COMMIT TRANSACTION;
+
+    PRINT 'Tablas Usuarios y TiposUsuario eliminadas correctamente.';
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+        ROLLBACK TRANSACTION;
+
+    THROW;
+END CATCH;
+
+
 GO
 
 DECLARE @SuperAdminClaveHash NVARCHAR(500) = N'$2a$11$gk/lE5669hXTdIvf3SGj5OFgxu773hnnt4ub/XOUrqXuKDbFtbds.';
@@ -91,8 +131,7 @@ CREATE TABLE dbo.Usuarios (
 );
 GO
 
-INSERT INTO dbo.TiposUsuario (Descripcion, IdUsuarioCreacion, Activo)
-VALUES (N'SUPERADMIN', NULL, 1);
+
 
 DECLARE @SuperAdminClaveHash NVARCHAR(500) = N'$2a$11$gk/lE5669hXTdIvf3SGj5OFgxu773hnnt4ub/XOUrqXuKDbFtbds.';
 
@@ -542,6 +581,8 @@ CREATE TABLE dbo.Depositos (
 	Activo BIT NOT NULL CONSTRAINT DF_Depositos_Activo DEFAULT (1),
 	IdUsuarioCreacion INT NOT NULL,
 	FechaCreacion DATETIME2 NOT NULL,
+	IdUsuarioUltimaModificacion INT  NULL,
+	FechaUltimaModificacion DATETIME2 NOT NULL,
 	CONSTRAINT PK_Depositos PRIMARY KEY (IdDeposito),
 	CONSTRAINT UQ_Depositos_Codigo UNIQUE (Codigo),
 	CONSTRAINT FK_Depositos_Usuarios FOREIGN KEY (IdUsuarioCreacion) REFERENCES dbo.Usuarios(IdUsuario)
@@ -555,6 +596,8 @@ CREATE TABLE dbo.TiposMovimientoStock (
 	Activo BIT NOT NULL CONSTRAINT DF_TiposMovimientoStock_Activo DEFAULT (1),
 	IdUsuarioCreacion INT NOT NULL,
 	FechaCreacion DATETIME2 NOT NULL,
+	IdUsuarioUltimaModificacion INT  NULL,
+	FechaUltimaModificacion DATETIME2 NOT NULL,
 	CONSTRAINT PK_TiposMovimientoStock PRIMARY KEY (IdTipoMovimientoStock),
 	CONSTRAINT UQ_TiposMovimientoStock_Codigo UNIQUE (Codigo),
 	CONSTRAINT FK_TiposMovimientoStock_Usuarios FOREIGN KEY (IdUsuarioCreacion) REFERENCES dbo.Usuarios(IdUsuario)

@@ -38,6 +38,10 @@ public interface IUnitOfWork : IDisposable
     IDomicilioRepository Domicilios { get; }
     ITelefonoRepository Telefonos { get; }
     IEmailRepository Emails { get; }
+    IFacturaRepository Facturas { get; }
+    IPagoClienteRepository PagosClientes { get; }
+    IValorCarteraRepository ValoresCartera { get; }
+    IPagoProveedorRepository PagosProveedores { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

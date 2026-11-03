@@ -58,7 +58,7 @@ public class DomicilioConfiguration : IEntityTypeConfiguration<Domicilio>
 
         builder.Property(e => e.FechaBaja)
             .HasColumnName("FechaBaja")
-            .HasColumnType("datetime2");
+            .HasColumnType("datetime2(3)");
 
         builder.Property(e => e.IdUsuarioCreacion)
             .HasColumnName("IdUsuarioCreacion")
@@ -66,7 +66,7 @@ public class DomicilioConfiguration : IEntityTypeConfiguration<Domicilio>
 
         builder.Property(e => e.FechaCreacion)
             .HasColumnName("FechaCreacion")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .IsRequired();
 
         builder.Property(e => e.IdUsuarioUltimaModificacion)
@@ -74,7 +74,7 @@ public class DomicilioConfiguration : IEntityTypeConfiguration<Domicilio>
 
         builder.Property(e => e.FechaUltimaModificacion)
             .HasColumnName("FechaUltimaModificacion")
-            .HasColumnType("datetime2");
+            .HasColumnType("datetime2(3)");
 
         builder.HasIndex(e => new { e.TipoReferencia, e.IdReferencia }).HasDatabaseName("IX_Domicilios_TipoReferencia_IdReferencia");
         builder.HasIndex(e => e.IdProvincia).HasDatabaseName("IX_Domicilios_IdProvincia");

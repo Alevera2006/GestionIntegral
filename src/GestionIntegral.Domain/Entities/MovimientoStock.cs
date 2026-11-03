@@ -14,5 +14,6 @@ public class MovimientoStock : EntityBase
     public virtual TipoMovimientoStock TipoMovimientoStock { get; set; } = null!;
     public virtual Usuario UsuarioResponsable { get; set; } = null!;
     public virtual Usuario UsuarioCreacion { get; set; } = null!;
+    public virtual Usuario? UsuarioModificacion { get; set; }
     public virtual ICollection<MovimientoStockDetalle> Detalles { get; set; } = new List<MovimientoStockDetalle>();
 }

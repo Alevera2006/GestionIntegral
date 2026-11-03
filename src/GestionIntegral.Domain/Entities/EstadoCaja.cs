@@ -8,5 +8,6 @@ public class EstadoCaja : EntityBase
     public bool Activo { get; set; } = true;
 
     public virtual Usuario UsuarioCreacion { get; set; } = null!;
+    public virtual Usuario? UsuarioModificacion { get; set; }
     public virtual ICollection<CajaCabecera> Cajas { get; set; } = new List<CajaCabecera>();
 }

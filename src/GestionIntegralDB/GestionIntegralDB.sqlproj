@@ -58,4 +58,9 @@
     <Folder Include="Properties" />
     <Folder Include="ScriptsInitial" />
   </ItemGroup>
+  <ItemGroup>
+    <Build Include="ScriptsInitial\Init_v2.sql" />
+    <Build Include="ScriptsInitial\Init.sql" />
+    <Build Include="Fix_MovimientosStock_AuditColumns.sql" />
+  </ItemGroup>
 </Project>

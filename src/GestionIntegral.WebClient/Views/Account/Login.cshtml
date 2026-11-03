@@ -18,12 +18,15 @@
 </head>
 <body class="login-page">
     <div class="login-box">
-        <div class="login-logo text-center">
-            <img src="~/images/logo.png" alt="GestionIntegral" class="img-fluid" style="max-height: 80px;" />
+        <div class="login-logo text-center mb-4">
+            <div class="login-logo-box p-3 rounded shadow">
+                <img src="~/images/logo.png" alt="GestionIntegral" class="img-fluid" style="max-height: 90px;" />
+                <h4 class="text-white mt-2 mb-0">GestionIntegral</h4>
+            </div>
         </div>
-        <div class="card">
+        <div class="card shadow-lg border-0">
             <div class="card-body login-card-body">
-                <p class="login-box-msg">Ingrese sus credenciales</p>
+                <p class="login-box-msg text-muted font-weight-bold">Ingrese sus credenciales</p>
 
                 @if (Context.Request.Query["expired"] == "1")
                 {
@@ -35,18 +38,20 @@
                 <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
                     @Html.AntiForgeryToken()
 
-                    <div class="input-group mb-3">
-                        <input asp-for="Usuario" class="form-control" placeholder="Usuario" autocomplete="username" />
+                    <label for="Usuario" class="font-weight-bold text-dark">Usuario</label>
+                    <div class="input-group mb-2 login-input-group">
+                        <input asp-for="Usuario" id="Usuario" class="form-control form-control-lg" placeholder="Ingrese su usuario" autocomplete="username" />
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-user"></span>
                             </div>
                         </div>
                     </div>
-                    <span asp-validation-for="Usuario" class="text-danger"></span>
+                    <span asp-validation-for="Usuario" class="text-danger small"></span>
 
-                    <div class="input-group mb-3">
-                        <input asp-for="Clave" type="password" class="form-control" placeholder="Contraseña" autocomplete="current-password" />
+                    <label for="Clave" class="font-weight-bold text-dark mt-2">Contraseña</label>
+                    <div class="input-group mb-2 login-input-group">
+                        <input asp-for="Clave" id="Clave" type="password" class="form-control form-control-lg" placeholder="Ingrese su contraseña" autocomplete="current-password" />
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>

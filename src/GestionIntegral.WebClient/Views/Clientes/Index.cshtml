@@ -4,15 +4,18 @@
 
 <partial name="_Alerts" />
 
-<div class="row justify-content-center">
-    <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
-        <div class="small-box bg-primary h-100">
+<div class="row">
+    <div class="col-auto">
+        <div class="small-box bg-primary">
             <div class="inner">
-                <h3><i class="fas fa-users mr-2"></i> Clientes</h3>
-                <p>Administre los clientes y sus datos de contacto.</p>
+                <h3>&nbsp;</h3>
+                <p>Clientes</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-friends"></i>
             </div>
             <button type="button" class="small-box-footer btn-administrar" id="btnAbrirClientes">
-                <i class="fas fa-users mr-1"></i> Clientes
+                Administrar <i class="fas fa-arrow-circle-right ml-1"></i>
             </button>
         </div>
     </div>
@@ -26,71 +29,17 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
             </div>
             <div class="modal-body">
-                <form id="clienteForm" autocomplete="off">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" id="clienteId" />
-
-                    <div class="row">
-                        <div class="col-md-3 form-group">
-                            <label for="clienteCodigo">Código</label>
-                            <input type="text" id="clienteCodigo" class="form-control" maxlength="20" required />
-                        </div>
-                        <div class="col-md-5 form-group">
-                            <label for="clienteRazonSocial">Razón Social</label>
-                            <input type="text" id="clienteRazonSocial" class="form-control" maxlength="150" required />
-                        </div>
-                        <div class="col-md-4 form-group">
-                            <label for="clienteNombreFantasia">Nombre Fantasía</label>
-                            <input type="text" id="clienteNombreFantasia" class="form-control" maxlength="150" />
-                        </div>
+                <div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
+                    <div class="form-group mb-2 flex-grow-1 mr-2" style="min-width: 220px;">
+                        <label for="clienteFiltro">Filtrar clientes</label>
+                        <input type="text" id="clienteFiltro" class="form-control" placeholder="Buscar por código, razón social, CUIT o condición" />
                     </div>
+                    <button type="button" id="btnNuevoCliente" class="btn btn-primary mb-2">
+                        <i class="fas fa-plus mr-1"></i> Nuevo
+                    </button>
+                </div>
 
-                    <div class="row">
-                        <div class="col-md-4 form-group">
-                            <label for="clienteCuit">CUIT</label>
-                            <input type="text" id="clienteCuit" class="form-control" maxlength="13" />
-                        </div>
-                        <div class="col-md-4 form-group">
-                            <label for="clienteCondicionPago">Condición de Pago</label>
-                            <select id="clienteCondicionPago" class="form-control"></select>
-                        </div>
-                        <div class="col-md-2 form-group d-flex align-items-end">
-                            <div class="icheck-primary d-inline">
-                                <input type="checkbox" id="clienteActivo" checked />
-                                <label for="clienteActivo">Activo</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12 form-group">
-                            <label for="clienteObservaciones">Observaciones</label>
-                            <textarea id="clienteObservaciones" class="form-control" rows="2" maxlength="500"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
-                        <div>
-                            <button type="button" id="btnClienteDomicilios" class="btn btn-outline-info btn-sm mr-1 btn-domicilios" data-id="0" disabled>
-                                <i class="fas fa-map-marker-alt mr-1"></i> Domicilios
-                            </button>
-                            <button type="button" id="btnClienteTelefonos" class="btn btn-outline-secondary btn-sm mr-1 btn-telefonos" data-id="0" disabled>
-                                <i class="fas fa-phone mr-1"></i> Teléfonos
-                            </button>
-                            <button type="button" id="btnClienteEmails" class="btn btn-outline-warning btn-sm btn-emails" data-id="0" disabled>
-                                <i class="fas fa-envelope mr-1"></i> Emails
-                            </button>
-                        </div>
-                        <div class="form-group text-right mb-0 mt-2 mt-md-0">
-                            <button type="button" id="btnNuevoCliente" class="btn btn-secondary"><i class="fas fa-plus mr-1"></i> Nuevo</button>
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i> Guardar</button>
-                        </div>
-                    </div>
-                </form>
-
-                <hr />
-
-                <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
                     <table class="table table-sm table-striped table-hover mb-0" id="clienteTable">
                         <thead>
                             <tr>
@@ -106,6 +55,76 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="clienteFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title" id="clienteFormTitle">Nuevo Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+            </div>
+            <form id="clienteForm" autocomplete="off">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="clienteId" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <label for="clienteCodigo">Código</label>
+                            <input type="text" id="clienteCodigo" class="form-control" maxlength="20" required />
+                        </div>
+                        <div class="col-md-8 form-group">
+                            <label for="clienteRazonSocial">Razón Social</label>
+                            <input type="text" id="clienteRazonSocial" class="form-control" maxlength="150" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label for="clienteNombreFantasia">Nombre Fantasía</label>
+                            <input type="text" id="clienteNombreFantasia" class="form-control" maxlength="150" />
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="clienteCuit">CUIT</label>
+                            <input type="text" id="clienteCuit" class="form-control" maxlength="13" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label for="clienteCondicionPago">Condición de Pago</label>
+                            <select id="clienteCondicionPago" class="form-control"></select>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="clienteObservaciones">Observaciones</label>
+                            <textarea id="clienteObservaciones" class="form-control" rows="2" maxlength="500"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 form-group d-flex align-items-end">
+                            <div class="icheck-primary d-inline">
+                                <input type="checkbox" id="clienteActivo" checked />
+                                <label for="clienteActivo">Activo</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-0" id="clienteContactButtons" style="display: none;">
+                        <button type="button" id="btnClienteDomicilios" class="btn btn-outline-info btn-sm mr-1 btn-domicilios" data-id="0" disabled>
+                            <i class="fas fa-map-marker-alt mr-1"></i> Domicilios
+                        </button>
+                        <button type="button" id="btnClienteTelefonos" class="btn btn-outline-secondary btn-sm mr-1 btn-telefonos" data-id="0" disabled>
+                            <i class="fas fa-phone mr-1"></i> Teléfonos
+                        </button>
+                        <button type="button" id="btnClienteEmails" class="btn btn-outline-warning btn-sm btn-emails" data-id="0" disabled>
+                            <i class="fas fa-envelope mr-1"></i> Emails
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i> Guardar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

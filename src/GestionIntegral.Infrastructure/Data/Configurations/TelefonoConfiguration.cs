@@ -46,7 +46,7 @@ public class TelefonoConfiguration : IEntityTypeConfiguration<Telefono>
 
         builder.Property(e => e.FechaBaja)
             .HasColumnName("FechaBaja")
-            .HasColumnType("datetime2");
+            .HasColumnType("datetime2(3)");
 
         builder.Property(e => e.IdUsuarioCreacion)
             .HasColumnName("IdUsuarioCreacion")
@@ -54,7 +54,7 @@ public class TelefonoConfiguration : IEntityTypeConfiguration<Telefono>
 
         builder.Property(e => e.FechaCreacion)
             .HasColumnName("FechaCreacion")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .IsRequired();
 
         builder.Property(e => e.IdUsuarioUltimaModificacion)
@@ -62,7 +62,7 @@ public class TelefonoConfiguration : IEntityTypeConfiguration<Telefono>
 
         builder.Property(e => e.FechaUltimaModificacion)
             .HasColumnName("FechaUltimaModificacion")
-            .HasColumnType("datetime2");
+            .HasColumnType("datetime2(3)");
 
         builder.HasIndex(e => new { e.TipoReferencia, e.IdReferencia }).HasDatabaseName("IX_Telefonos_TipoReferencia_IdReferencia");
 

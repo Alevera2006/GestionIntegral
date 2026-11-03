@@ -2,6 +2,10 @@ using AutoMapper;
 using GestionIntegral.Application.DTOs.AlicuotasImpuesto;
 using GestionIntegral.Application.DTOs.Cajas;
 using GestionIntegral.Application.DTOs.Categorias;
+using GestionIntegral.Application.DTOs.CuentasCorrientes;
+using GestionIntegral.Application.DTOs.Facturacion;
+using GestionIntegral.Application.DTOs.PagosProveedores;
+using GestionIntegral.Application.DTOs.ValoresCartera;
 using GestionIntegral.Application.DTOs.ClienteContactos;
 using GestionIntegral.Application.DTOs.CondicionesIVA;
 using GestionIntegral.Application.DTOs.Contactos;
@@ -134,6 +138,30 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.ProductoDescripcion,
                        opt => opt.MapFrom(src => src.Producto.Descripcion));
 
+        CreateMap<MovimientoStockDetalle, HistorialStockPorProductoResponseDto>()
+            .ForMember(dest => dest.IdMovimientoStock,
+                       opt => opt.MapFrom(src => src.MovimientoStock.IdMovimientoStock))
+            .ForMember(dest => dest.FechaMovimiento,
+                       opt => opt.MapFrom(src => src.MovimientoStock.FechaMovimiento))
+            .ForMember(dest => dest.IdDeposito,
+                       opt => opt.MapFrom(src => src.MovimientoStock.IdDeposito))
+            .ForMember(dest => dest.DepositoDescripcion,
+                       opt => opt.MapFrom(src => src.MovimientoStock.Deposito.Descripcion))
+            .ForMember(dest => dest.IdTipoMovimientoStock,
+                       opt => opt.MapFrom(src => src.MovimientoStock.IdTipoMovimientoStock))
+            .ForMember(dest => dest.TipoMovimientoStockDescripcion,
+                       opt => opt.MapFrom(src => src.MovimientoStock.TipoMovimientoStock.Descripcion))
+            .ForMember(dest => dest.Signo,
+                       opt => opt.MapFrom(src => src.MovimientoStock.TipoMovimientoStock.Signo))
+            .ForMember(dest => dest.IdUsuarioResponsable,
+                       opt => opt.MapFrom(src => src.MovimientoStock.IdUsuarioResponsable))
+            .ForMember(dest => dest.NombreUsuarioResponsable,
+                       opt => opt.MapFrom(src => $"{src.MovimientoStock.UsuarioResponsable.Nombre} {src.MovimientoStock.UsuarioResponsable.Apellido}"))
+            .ForMember(dest => dest.Referencia,
+                       opt => opt.MapFrom(src => src.MovimientoStock.Referencia))
+            .ForMember(dest => dest.Observaciones,
+                       opt => opt.MapFrom(src => src.MovimientoStock.Observaciones));
+
         CreateMap<Contacto, ContactoResponseDto>();
 
         CreateMap<ClienteContacto, ClienteContactoResponseDto>()
@@ -141,5 +169,29 @@ public class MappingProfile : Profile
                        opt => opt.MapFrom(src => src.Cliente.RazonSocial))
             .ForMember(dest => dest.ContactoNombre,
                        opt => opt.MapFrom(src => $"{src.Contacto.Nombre} {src.Contacto.Apellido}"));
+
+        CreateMap<Factura, FacturaResponseDto>()
+            .ForMember(dest => dest.ClienteNombre,
+                       opt => opt.MapFrom(src => src.Cliente != null ? src.Cliente.RazonSocial : src.NombreCliente))
+            .ForMember(dest => dest.TipoComprobante,
+                       opt => opt.MapFrom(src => src.TipoComprobante.Descripcion))
+            .ForMember(dest => dest.CondicionPago,
+                       opt => opt.MapFrom(src => src.CondicionPago.Descripcion))
+            .ForMember(dest => dest.EsCuentaCorriente,
+                       opt => opt.MapFrom(src => src.CondicionPago.Descripcion.ToLower().Contains("cuenta corriente")));
+
+        CreateMap<FacturaDetalle, FacturaDetalleResponseDto>()
+            .ForMember(dest => dest.ProductoDescripcion,
+                       opt => opt.MapFrom(src => src.Producto != null ? src.Producto.Descripcion : src.Descripcion));
+
+        CreateMap<ValorCartera, ValorCarteraResponseDto>()
+            .ForMember(dest => dest.ClienteNombre,
+                       opt => opt.MapFrom(src => src.Cliente.RazonSocial));
+
+        CreateMap<PagoProveedor, PagoProveedorResponseDto>()
+            .ForMember(dest => dest.ProveedorNombre,
+                       opt => opt.MapFrom(src => src.Proveedor.RazonSocial))
+            .ForMember(dest => dest.MedioPago,
+                       opt => opt.MapFrom(src => src.MedioPago.Descripcion));
     }
 }

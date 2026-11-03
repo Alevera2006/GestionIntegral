@@ -39,6 +39,13 @@ public class MovimientosStockController : BaseController
         return Result(response);
     }
 
+    [HttpPost("con-detalles")]
+    public async Task<IActionResult> CreateWithDetails([FromBody] CrearMovimientoStockConDetallesRequestDto request, CancellationToken cancellationToken)
+    {
+        var response = await _movimientoStockService.CrearConDetallesAsync(request, cancellationToken);
+        return Result(response);
+    }
+
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] ActualizarMovimientoStockRequestDto request, CancellationToken cancellationToken)
     {
@@ -57,6 +64,13 @@ public class MovimientosStockController : BaseController
     public async Task<IActionResult> GetDetalles(long idMovimiento, CancellationToken cancellationToken)
     {
         var response = await _detalleService.ObtenerPorMovimientoAsync(idMovimiento, cancellationToken);
+        return Result(response);
+    }
+
+    [HttpGet("historial/{idProducto:int}")]
+    public async Task<IActionResult> GetHistorialPorProducto(int idProducto, [FromQuery] int? idDeposito, CancellationToken cancellationToken)
+    {
+        var response = await _movimientoStockService.ObtenerHistorialPorProductoAsync(idProducto, idDeposito, cancellationToken);
         return Result(response);
     }
 

@@ -41,7 +41,7 @@ public class EmailConfiguration : IEntityTypeConfiguration<Email>
 
         builder.Property(e => e.FechaBaja)
             .HasColumnName("FechaBaja")
-            .HasColumnType("datetime2");
+            .HasColumnType("datetime2(3)");
 
         builder.Property(e => e.IdUsuarioCreacion)
             .HasColumnName("IdUsuarioCreacion")
@@ -49,7 +49,7 @@ public class EmailConfiguration : IEntityTypeConfiguration<Email>
 
         builder.Property(e => e.FechaCreacion)
             .HasColumnName("FechaCreacion")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .IsRequired();
 
         builder.Property(e => e.IdUsuarioUltimaModificacion)
@@ -57,7 +57,7 @@ public class EmailConfiguration : IEntityTypeConfiguration<Email>
 
         builder.Property(e => e.FechaUltimaModificacion)
             .HasColumnName("FechaUltimaModificacion")
-            .HasColumnType("datetime2");
+            .HasColumnType("datetime2(3)");
 
         builder.HasIndex(e => new { e.TipoReferencia, e.IdReferencia }).HasDatabaseName("IX_Emails_TipoReferencia_IdReferencia");
 

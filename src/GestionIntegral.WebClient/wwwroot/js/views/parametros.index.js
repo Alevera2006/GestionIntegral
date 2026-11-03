@@ -228,6 +228,11 @@
     }
 
     $(function () {
+        var grupoInicial = $('#gruposParametros').data('grupo-inicial') || 'parametricos';
+        if (grupoInicial && grupoInicial !== 'parametricos') {
+            $('#gruposParametros button[data-grupo="' + grupoInicial + '"]').trigger('click');
+        }
+
         $('#gruposParametros button').on('click', function () {
             var boton = $(this);
             var grupo = boton.data('grupo');
@@ -240,7 +245,7 @@
         $('.btn-administrar').on('click', function () {
             var tarjeta = $(this).closest('.tarjeta-parametro');
             apiUrl = tarjeta.data('api-url');
-            titulo = tarjeta.find('.inner h3').text().trim();
+            titulo = tarjeta.find('.inner p').text().trim();
             requiereAfip = tarjeta.data('requiere-afip') === true || tarjeta.data('requiere-afip') === 'true';
             $('#parametroModalTitle').text('Administrar ' + titulo);
             $('#parametroModalHeader').removeClass('bg-primary bg-success bg-warning bg-info').addClass('bg-primary');

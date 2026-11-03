@@ -10,5 +10,6 @@ public class Moneda : EntityBase
     public bool Activo { get; set; } = true;
 
     public virtual Usuario UsuarioCreacion { get; set; } = null!;
+    public virtual Usuario? UsuarioModificacion { get; set; }
     public virtual ICollection<CajaDetalle> CajaDetalles { get; set; } = new List<CajaDetalle>();
 }

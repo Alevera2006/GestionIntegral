@@ -19,6 +19,14 @@
                 </a>
             </li>
 
+            <!-- Logs -->
+            <li class="nav-item mb-2">
+                <a asp-controller="Logs" asp-action="Index" class="nav-link menu-boton @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Logs" ? "active" : "")">
+                    <i class="nav-icon fas fa-file-alt"></i>
+                    <p>Logs</p>
+                </a>
+            </li>
+
             <!-- Seguridad -->
             <li class="nav-item mb-2">
                 <a asp-controller="Seguridad" asp-action="Index" class="nav-link menu-boton @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Seguridad" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Usuarios" || ViewContext.RouteData.Values["Controller"]?.ToString() == "TiposUsuario" ? "active" : "")">
@@ -27,18 +35,43 @@
                 </a>
             </li>
 
-            <!-- Comercial -->
+            <!-- Ventas -->
             <li class="nav-item mb-2">
-                <a asp-controller="Clientes" asp-action="Index" class="nav-link menu-boton @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Clientes" ? "active" : "")">
+                <a asp-controller="Ventas" asp-action="Index" class="nav-link menu-boton @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Ventas" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Facturacion" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Productos" ? "active" : "")">
                     <i class="nav-icon fas fa-cash-register"></i>
                     <p>Ventas</p>
                 </a>
             </li>
 
+            <!-- Compras -->
             <li class="nav-item mb-2">
-                <a asp-controller="Proveedores" asp-action="Index" class="nav-link menu-boton @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Proveedores" ? "active" : "")">
+                <a asp-controller="Compras" asp-action="Index" class="nav-link menu-boton @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Compras" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Proveedores" || ViewContext.RouteData.Values["Controller"]?.ToString() == "PagosProveedores" ? "active" : "")">
                     <i class="nav-icon fas fa-shopping-cart"></i>
                     <p>Compras</p>
+                </a>
+            </li>
+
+            <!-- Stock / Productos -->
+            <li class="nav-item mb-2">
+                <a asp-controller="Stock" asp-action="Index" class="nav-link menu-boton @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Stock" ? "active" : "")">
+                    <i class="nav-icon fas fa-boxes"></i>
+                    <p>Stock</p>
+                </a>
+            </li>
+
+            <!-- Finanzas -->
+            <li class="nav-item mb-2">
+                <a asp-controller="Finanzas" asp-action="Index" class="nav-link menu-boton @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Finanzas" || ViewContext.RouteData.Values["Controller"]?.ToString() == "CuentasCorrientes" || ViewContext.RouteData.Values["Controller"]?.ToString() == "ValoresCartera" ? "active" : "")">
+                    <i class="nav-icon fas fa-chart-line"></i>
+                    <p>Finanzas</p>
+                </a>
+            </li>
+
+            <!-- Reportes -->
+            <li class="nav-item mb-2">
+                <a asp-controller="Reportes" asp-action="Index" class="nav-link menu-boton @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reportes" ? "active" : "")">
+                    <i class="nav-icon fas fa-file-alt"></i>
+                    <p>Reportes</p>
                 </a>
             </li>
 

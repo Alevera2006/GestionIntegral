@@ -19,13 +19,11 @@
     };
 
     const first = (value, fallback = '') => (value === null || value === undefined ? fallback : value);
-
     const toBoolText = value => value ? 'Sí' : 'No';
 
     const loadCondiciones = async () => {
         const res = await $.getJSON('/Clientes/CondicionesPago');
         state.condiciones = res?.datos ?? res?.Datos ?? [];
-
         const $sel = $('#clienteCondicionPago');
         $sel.empty().append('<option value="">-- Sin condición --</option>');
         state.condiciones.forEach(c => {
@@ -38,7 +36,6 @@
     const loadProvincias = async () => {
         const res = await $.getJSON('/Clientes/Provincias');
         state.provincias = res?.datos ?? res?.Datos ?? [];
-
         const $sel = $('#domProvincia');
         $sel.empty().append('<option value="">-- Seleccione --</option>');
         state.provincias.forEach(p => {
@@ -54,7 +51,6 @@
             notify('error', res?.mensaje ?? res?.Mensaje ?? 'No se pudieron cargar clientes.');
             return;
         }
-
         state.clientes = res?.datos ?? res?.Datos ?? [];
         renderClientes();
     };
@@ -63,7 +59,22 @@
         const $tb = $('#clienteTable tbody');
         $tb.empty();
 
-        state.clientes.forEach(c => {
+        const filtro = ($('#clienteFiltro').val() || '').toString().trim().toLowerCase();
+        const visibles = state.clientes.filter(c => {
+            if (!filtro) return true;
+            const codigo = (c.codigo ?? c.Codigo ?? '').toString().toLowerCase();
+            const razon = (c.razonSocial ?? c.RazonSocial ?? '').toString().toLowerCase();
+            const cuit = (c.cuit ?? c.Cuit ?? '').toString().toLowerCase();
+            const condicion = (c.condicionPagoDescripcion ?? c.CondicionPagoDescripcion ?? '').toString().toLowerCase();
+            return codigo.includes(filtro) || razon.includes(filtro) || cuit.includes(filtro) || condicion.includes(filtro);
+        });
+
+        if (!visibles.length) {
+            $tb.html('<tr><td colspan="6" class="text-center text-muted">No hay clientes para el filtro aplicado.</td></tr>');
+            return;
+        }
+
+        visibles.forEach(c => {
             const id = c.idCliente ?? c.IdCliente;
             const codigo = c.codigo ?? c.Codigo;
             const razon = c.razonSocial ?? c.RazonSocial;
@@ -106,6 +117,8 @@
         $('#clienteCondicionPago').val('');
         $('#clienteObservaciones').val('');
         $('#clienteActivo').prop('checked', true);
+        $('#clienteFormTitle').text('Nuevo Cliente');
+        $('#clienteContactButtons').hide();
         toggleClienteContactButtons(0);
     };
 
@@ -150,6 +163,7 @@
         }
 
         notify('success', 'Cliente guardado correctamente.');
+        $('#clienteFormModal').modal('hide');
         clearClienteForm();
         await loadClientes();
     };
@@ -166,7 +180,15 @@
         $('#clienteCondicionPago').val(first(c.idCondicionPago ?? c.IdCondicionPago, ''));
         $('#clienteObservaciones').val(first(c.observaciones ?? c.Observaciones));
         $('#clienteActivo').prop('checked', !!(c.activo ?? c.Activo));
+        $('#clienteFormTitle').text('Editar Cliente');
+        $('#clienteContactButtons').show();
         toggleClienteContactButtons(id);
+        $('#clienteFormModal').modal('show');
+    };
+
+    const nuevoCliente = () => {
+        clearClienteForm();
+        $('#clienteFormModal').modal('show');
     };
 
     const deleteCliente = async id => {
@@ -296,6 +318,7 @@
         const res = await $.getJSON(`/Clientes/ListarTelefonos?idCliente=${idCliente}`);
         const list = res?.datos ?? res?.Datos ?? [];
         state.telefonos = list;
+
         const $tb = $('#telefonosClienteTable tbody');
         $tb.empty();
 
@@ -383,6 +406,7 @@
         const res = await $.getJSON(`/Clientes/ListarEmails?idCliente=${idCliente}`);
         const list = res?.datos ?? res?.Datos ?? [];
         state.emails = list;
+
         const $tb = $('#emailsClienteTable tbody');
         $tb.empty();
 
@@ -407,8 +431,7 @@
         const id = Number($('#emailId').val() || 0);
 
         const payload = {
-            tipoReferencia: 'C',
-            idReferencia: idCliente,
+            idCliente,
             email: $('#emailValor').val()?.trim()
         };
 
@@ -462,12 +485,17 @@
     const bindEvents = () => {
         $('#btnAbrirClientes').on('click', async () => {
             $('#clienteModal').modal('show');
-            clearClienteForm();
+            $('#clienteFiltro').val('');
             await Promise.all([loadCondiciones(), loadProvincias(), loadClientes()]);
         });
 
-        $('#btnNuevoCliente').on('click', clearClienteForm);
+        $('#clienteFiltro').on('input', renderClientes);
+        $('#btnNuevoCliente').on('click', nuevoCliente);
         $('#clienteForm').on('submit', saveCliente);
+
+        $('#clienteFormModal').on('hidden.bs.modal', () => {
+            clearClienteForm();
+        });
 
         $('#clienteTable').on('click', '.btn-editar', function () {
             editCliente(Number($(this).data('id')));

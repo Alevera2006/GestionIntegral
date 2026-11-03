@@ -46,7 +46,7 @@ public class MonedaConfiguration : IEntityTypeConfiguration<Moneda>
 
         builder.Property(e => e.FechaCreacion)
             .HasColumnName("FechaCreacion")
-            .HasColumnType("datetime2")
+            .HasColumnType("datetime2(3)")
             .IsRequired();
 
         builder.Property(e => e.IdUsuarioUltimaModificacion)
@@ -63,7 +63,13 @@ public class MonedaConfiguration : IEntityTypeConfiguration<Moneda>
         builder.HasOne(e => e.UsuarioCreacion)
             .WithMany()
             .HasForeignKey(e => e.IdUsuarioCreacion)
-            .HasConstraintName("FK_Monedas_Usuarios")
+            .HasConstraintName("FK_Monedas_UsuariosCreacion")
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(e => e.UsuarioModificacion)
+            .WithMany()
+            .HasForeignKey(e => e.IdUsuarioUltimaModificacion)
+            .HasConstraintName("FK_Monedas_UsuariosModificacion")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

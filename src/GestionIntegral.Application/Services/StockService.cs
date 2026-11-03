@@ -28,6 +28,18 @@ public class StockService : IStockService
         return BaseResponseDto<IEnumerable<StockResponseDto>>.Ok(_mapper.Map<IEnumerable<StockResponseDto>>(stocks));
     }
 
+    public async Task<BaseResponseDto<IEnumerable<StockResponseDto>>> ObtenerPorFiltroAsync(StockFiltroRequestDto filtro, CancellationToken cancellationToken = default)
+    {
+        var stocks = await _unitOfWork.Stock.GetByFiltroAsync(
+            filtro.IdDeposito,
+            filtro.IdCategoria,
+            filtro.IdSubCategoria,
+            filtro.BusquedaProducto,
+            cancellationToken);
+
+        return BaseResponseDto<IEnumerable<StockResponseDto>>.Ok(_mapper.Map<IEnumerable<StockResponseDto>>(stocks));
+    }
+
     public async Task<BaseResponseDto<StockResponseDto>> ObtenerPorIdAsync(long id, CancellationToken cancellationToken = default)
     {
         var stock = await _unitOfWork.Stock.GetByIdAsync((int)id, cancellationToken);

@@ -1,0 +1,117 @@
+@{
+    ViewData["Title"] = "Facturación";
+}
+
+<partial name="_Alerts" />
+
+<div class="card">
+    <div class="card-header bg-primary">
+        <h3 class="card-title"><i class="fas fa-file-invoice-dollar mr-2"></i> Registrar Venta</h3>
+    </div>
+    <div class="card-body">
+        <form id="facturacionForm" autocomplete="off">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    <label for="factFecha">Fecha</label>
+                    <input type="date" id="factFecha" class="form-control" required />
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="factTipoComprobante">Tipo de Comprobante</label>
+                    <select id="factTipoComprobante" class="form-control" required></select>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="factNumero">Número</label>
+                    <input type="text" id="factNumero" class="form-control" maxlength="20" placeholder="0001-00000001" required />
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="factCondicionPago">Condición de Pago</label>
+                    <select id="factCondicionPago" class="form-control" required></select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9 form-group">
+                    <label for="factCliente">Cliente</label>
+                    <select id="factCliente" class="form-control"></select>
+                    <small class="form-text text-muted">Dejar vacío para Consumidor Final.</small>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="factNombreCliente">Nombre cliente (CF)</label>
+                    <input type="text" id="factNombreCliente" class="form-control" maxlength="100" value="Consumidor Final" />
+                </div>
+            </div>
+
+            <hr />
+
+            <h5>Detalle de ítems</h5>
+            <div class="row mb-3">
+                <div class="col-md-5">
+                    <select id="factProducto" class="form-control"></select>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" id="factCantidad" class="form-control" min="0.01" step="0.01" placeholder="Cantidad" />
+                </div>
+                <div class="col-md-2">
+                    <input type="number" id="factPrecio" class="form-control" min="0" step="0.01" placeholder="Precio" />
+                </div>
+                <div class="col-md-2">
+                    <select id="factIva" class="form-control"></select>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" id="btnAgregarItem" class="btn btn-success btn-block"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-sm table-striped" id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>IVA</th>
+                            <th>Subtotal</th>
+                            <th>IVA $</th>
+                            <th class="table-actions">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="row justify-content-end">
+                <div class="col-md-4">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Subtotal</th>
+                            <td class="text-right" id="totalSubtotal">0,00</td>
+                        </tr>
+                        <tr>
+                            <th>IVA</th>
+                            <td class="text-right" id="totalIva">0,00</td>
+                        </tr>
+                        <tr class="table-primary">
+                            <th>Total</th>
+                            <td class="text-right font-weight-bold" id="totalGeneral">0,00</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="factObservaciones">Observaciones</label>
+                <textarea id="factObservaciones" class="form-control" rows="2" maxlength="500"></textarea>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="/" class="btn btn-secondary"><i class="fas fa-arrow-left mr-1"></i> Volver</a>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i> Guardar Factura</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/views/facturacion.index.js" asp-append-version="true"></script>
+}

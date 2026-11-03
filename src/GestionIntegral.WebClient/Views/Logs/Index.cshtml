@@ -1,0 +1,122 @@
+@model GestionIntegral.WebClient.Models.Logs.LogsViewModel
+@{
+    ViewData["Title"] = "Logs";
+}
+
+<div class="card">
+    <div class="card-header bg-dark">
+        <h3 class="card-title"><i class="fas fa-file-alt mr-2"></i> Logs de la aplicación</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <h5>Archivos de log</h5>
+                @if (!Model.Archivos.Any())
+                {
+                    <p class="text-muted">No hay archivos de log disponibles.</p>
+                }
+                else
+                {
+                    <div class="list-group" style="max-height: 600px; overflow-y: auto;">
+                        @foreach (var archivo in Model.Archivos)
+                        {
+                            <a href="@Url.Action("Index", new { archivo = archivo.Nombre, nivel = Model.FiltroNivel, texto = Model.FiltroTexto, fechaDesde = Model.FiltroFechaDesde?.ToString("yyyy-MM-dd"), fechaHasta = Model.FiltroFechaHasta?.ToString("yyyy-MM-dd") })"
+                               class="list-group-item list-group-item-action @(Model.ArchivoSeleccionado?.Nombre == archivo.Nombre ? "active" : "")">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">@archivo.Nombre</h6>
+                                    <small>@archivo.TamanioFormateado</small>
+                                </div>
+                                <small>@archivo.Fecha.ToString("g")</small>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="col-md-9">
+                @if (Model.ArchivoSeleccionado != null)
+                {
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>@Model.ArchivoSeleccionado.Nombre</h5>
+                        <a href="@Url.Action("Descargar", new { archivo = Model.ArchivoSeleccionado.Nombre })" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-download mr-1"></i> Descargar
+                        </a>
+                    </div>
+
+                    <form method="get" action="@Url.Action("Index")" class="mb-3">
+                        <input type="hidden" name="archivo" value="@Model.ArchivoSeleccionado.Nombre" />
+                        <div class="row">
+                            <div class="col-md-3">
+                                <select name="nivel" class="form-control">
+                                    <option value="">Todos los niveles</option>
+                                    @foreach (var nivel in Model.NivelesDisponibles)
+                                    {
+                                        <option value="@nivel" selected="@(Model.FiltroNivel == nivel ? "selected" : null)">@nivel</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" name="texto" class="form-control" placeholder="Buscar texto..." value="@Model.FiltroTexto" />
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" name="fechaDesde" class="form-control" value="@Model.FiltroFechaDesde?.ToString("yyyy-MM-dd")" />
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" name="fechaHasta" class="form-control" value="@Model.FiltroFechaHasta?.ToString("yyyy-MM-dd")" />
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-info btn-block"><i class="fas fa-filter mr-1"></i> Filtrar</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-sm table-striped table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Nivel</th>
+                                    <th>Fuente</th>
+                                    <th>Mensaje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entrada in Model.Entradas)
+                                {
+                                    var nivelClass = entrada.Nivel switch
+                                    {
+                                        "ERR" or "FTL" => "table-danger",
+                                        "WRN" => "table-warning",
+                                        "INF" => "table-info",
+                                        _ => ""
+                                    };
+                                    <tr class="@nivelClass">
+                                        <td nowrap>@entrada.Fecha.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                        <td><span class="badge badge-@(entrada.Nivel switch { "ERR" or "FTL" => "danger", "WRN" => "warning", "INF" => "info", _ => "secondary" })">@entrada.Nivel</span></td>
+                                        <td>@entrada.Fuente</td>
+                                        <td style="white-space: pre-wrap;">
+                                            @entrada.Mensaje
+                                            @if (!string.IsNullOrWhiteSpace(entrada.Excepcion))
+                                            {
+                                                <div class="text-muted small mt-1" style="white-space: pre-wrap;">@entrada.Excepcion</div>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (!Model.Entradas.Any())
+                    {
+                        <p class="text-muted mt-3">No hay entradas que coincidan con los filtros aplicados.</p>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">Seleccione un archivo de log para ver su contenido.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

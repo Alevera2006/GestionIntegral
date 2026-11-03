@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "Pagos a Proveedores";
+}
+
+<partial name="_Alerts" />
+
+<div class="card">
+    <div class="card-header bg-success">
+        <h3 class="card-title"><i class="fas fa-money-bill-wave mr-2"></i> Registrar Pago a Proveedor</h3>
+    </div>
+    <div class="card-body">
+        <form id="pagoProveedorForm" autocomplete="off">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    <label for="ppFecha">Fecha</label>
+                    <input type="date" id="ppFecha" class="form-control" required />
+                </div>
+                <div class="col-md-5 form-group">
+                    <label for="ppProveedor">Proveedor</label>
+                    <select id="ppProveedor" class="form-control" required></select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="ppMedioPago">Medio de Pago</label>
+                    <select id="ppMedioPago" class="form-control" required></select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    <label for="ppMonto">Monto</label>
+                    <input type="number" id="ppMonto" class="form-control" min="0.01" step="0.01" required />
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="ppConcepto">Concepto</label>
+                    <input type="text" id="ppConcepto" class="form-control" maxlength="250" required />
+                </div>
+            </div>
+            <div id="ppChequeFields" style="display: none;">
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <label for="ppNumeroCheque">Número de Cheque</label>
+                        <input type="text" id="ppNumeroCheque" class="form-control" maxlength="50" />
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label for="ppBanco">Banco</label>
+                        <input type="text" id="ppBanco" class="form-control" maxlength="100" />
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label for="ppFechaVencimientoCheque">Fecha Vencimiento</label>
+                        <input type="date" id="ppFechaVencimientoCheque" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ppObservaciones">Observaciones</label>
+                <textarea id="ppObservaciones" class="form-control" rows="2" maxlength="500"></textarea>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a href="/" class="btn btn-secondary"><i class="fas fa-arrow-left mr-1"></i> Volver</a>
+                <button type="submit" class="btn btn-success"><i class="fas fa-save mr-1"></i> Guardar Pago</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-list mr-2"></i> Pagos Registrados</h3>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <select id="ppFiltroProveedor" class="form-control">
+                    <option value="">Todos los proveedores</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover" id="pagosProveedorTable">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Proveedor</th>
+                        <th>Concepto</th>
+                        <th>Medio de Pago</th>
+                        <th>Monto</th>
+                        <th>Cheque/Banco</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/views/pagosproveedores.index.js" asp-append-version="true"></script>
+}

@@ -15,5 +15,6 @@ public class CajaCabecera : EntityBase
     public virtual Usuario UsuarioResponsable { get; set; } = null!;
     public virtual EstadoCaja EstadoCaja { get; set; } = null!;
     public virtual Usuario UsuarioCreacion { get; set; } = null!;
+    public virtual Usuario? UsuarioModificacion { get; set; }
     public virtual ICollection<CajaDetalle> Detalles { get; set; } = new List<CajaDetalle>();
 }

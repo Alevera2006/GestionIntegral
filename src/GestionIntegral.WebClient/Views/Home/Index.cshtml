@@ -17,7 +17,7 @@
 
 <!-- Widgets de estadísticas -->
 <div class="row">
-    <div class="col-lg-2 col-6">
+    <div class="col-auto">
         <div class="small-box bg-info">
             <div class="inner">
                 <h3>@Model.TotalUsuarios</h3>
@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    <div class="col-lg-2 col-6">
+    <div class="col-auto">
         <div class="small-box bg-success">
             <div class="inner">
                 <h3>@Model.UsuariosActivos</h3>
@@ -39,11 +39,11 @@
             <div class="icon">
                 <i class="fas fa-user-check"></i>
             </div>
-            <span class="small-box-footer">&nbsp;</span>
+            <a href="/Usuarios" class="small-box-footer">Administrar <i class="fas fa-arrow-circle-right ml-1"></i></a>
         </div>
     </div>
 
-    <div class="col-lg-2 col-6">
+    <div class="col-auto">
         <div class="small-box bg-warning">
             <div class="inner">
                 <h3>@Model.TotalTiposUsuario</h3>
@@ -56,7 +56,7 @@
         </div>
     </div>
 
-    <div class="col-lg-2 col-6">
+    <div class="col-auto">
         <div class="small-box bg-primary">
             <div class="inner">
                 <h3>@Model.TotalClientes</h3>
@@ -69,7 +69,7 @@
         </div>
     </div>
 
-    <div class="col-lg-2 col-6">
+    <div class="col-auto">
         <div class="small-box bg-secondary">
             <div class="inner">
                 <h3>@Model.TotalProveedores</h3>
@@ -82,7 +82,7 @@
         </div>
     </div>
 
-    <div class="col-lg-2 col-6">
+    <div class="col-auto">
         <div class="small-box bg-danger">
             <div class="inner">
                 <h3>@Model.TotalParametros</h3>

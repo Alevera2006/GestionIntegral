@@ -1,0 +1,26 @@
+@model IEnumerable<GestionIntegral.WebClient.Models.Stock.OpcionStockViewModel>
+@{
+    ViewData["Title"] = "Stock";
+}
+
+<div class="row">
+    @foreach (var opcion in Model)
+    {
+        <div class="col-auto">
+            <a href="@opcion.Url" class="text-decoration-none">
+                <div class="small-box @opcion.Color">
+                    <div class="inner">
+                        <h3>&nbsp;</h3>
+                        <p>@opcion.Titulo</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas @opcion.Icono"></i>
+                    </div>
+                    <span class="small-box-footer">
+                        Administrar <i class="fas fa-arrow-circle-right ml-1"></i>
+                    </span>
+                </div>
+            </a>
+        </div>
+    }
+</div>

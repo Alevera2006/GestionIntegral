@@ -18,16 +18,56 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #e9ecef;
+    background-image: url('/images/fondo_2_oscuro_geometrico.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .login-box {
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+}
+
+.login-logo-box {
+    background-color: rgba(0, 0, 0, 0.5);
+    display: inline-block;
 }
 
 .login-card-body {
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
+    padding: 2rem;
+}
+
+.login-input-group .form-control {
+    border: 2px solid #ced4da;
+    background-color: #fff;
+    color: #212529;
+    font-size: 1.1rem;
+}
+
+.login-input-group .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    background-color: #fff;
+}
+
+.login-input-group .input-group-text {
+    background-color: #e9ecef;
+    border: 2px solid #ced4da;
+    border-left: none;
+    color: #495057;
+}
+
+.login-input-group .form-control::placeholder {
+    color: #6c757d;
+    opacity: 1;
+}
+
+.login-page .btn-primary {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.6rem 1rem;
 }
 
 /* Validación */
@@ -51,85 +91,129 @@ body {
     width: 1%;
 }
 
-/* Tarjetas small-box personalizadas */
+/* Fondo oscuro geométrico para las vistas de tarjetas */
+.content-wrapper {
+    background-image: url('/images/fondo_2_oscuro_geometrico.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Tarjetas small-box estandar AdminLTE con tamaño fijo */
 .small-box {
-    text-align: center;
+    border-radius: 0.25rem;
+    box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
     background-image: url('/images/fondo_1_claro_ondas.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-color: #f0f4f8;
     color: #1f3a5f;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 180px;
+    height: 180px;
+    margin-bottom: 1rem;
 }
 
-.small-box .inner {
-    padding: 20px 10px 40px 10px;
+.small-box > .inner {
+    padding: 10px;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.small-box .inner h3 {
-    font-size: 1.3rem;
+.small-box > .inner > h3,
+.small-box > .inner > p {
+    color: #000;
+}
+
+.small-box > .inner > h3 {
+    font-size: 2.2rem;
     font-weight: 700;
-    margin: 0;
-    white-space: normal;
-    line-height: 1.3;
-    color: #1f3a5f;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+    margin: 0 0 10px;
+    padding: 0;
+    white-space: nowrap;
 }
 
-.small-box .inner p {
-    font-size: 0.9rem;
-    margin: 5px 0 0 0;
-    color: #1f3a5f;
+.small-box > .inner > p {
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+}
+
+.small-box h3,
+.small-box p {
+    z-index: 5;
 }
 
 .small-box .icon {
-    display: none;
+    color: rgba(0, 0, 0, .15);
+    z-index: 0;
 }
 
-.small-box .tarjeta-icono-footer {
-    font-size: 0.85rem;
-    margin-left: 0.5rem;
-    opacity: 0.8;
-    vertical-align: middle;
+.small-box .icon > i {
+    font-size: 70px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    transition: -webkit-transform .3s linear;
+    transition: transform .3s linear;
+    transition: transform .3s linear, -webkit-transform .3s linear;
+}
+
+.small-box:hover .icon > i {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .small-box .small-box-footer {
+    background-color: rgba(0, 0, 0, .1);
+    color: rgba(255, 255, 255, .8);
     display: block;
-    width: 100%;
+    padding: 3px 0;
+    position: relative;
     text-align: center;
-    padding: 10px 0;
-    font-weight: 600;
+    text-decoration: none;
+    z-index: 10;
+}
+
+.small-box .small-box-footer:hover {
+    background-color: rgba(0, 0, 0, .15);
+    color: #fff;
 }
 
 .small-box .btn-administrar,
-.small-box a.small-box-footer,
 .small-box button.small-box-footer {
-    display: block;
-    width: 100%;
+    background-color: rgba(0, 0, 0, .1);
     border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-    background-color: #f8f9fa !important;
-    color: #212529 !important;
+    color: rgba(255, 255, 255, .8);
     cursor: pointer;
-    transition: all 0.2s;
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    padding: 3px 0;
+    position: relative;
+    text-align: center;
     text-decoration: none;
-    padding: 10px 0;
-    font-weight: 600;
-    font-size: 0.95rem;
+    width: 100%;
+    z-index: 10;
 }
 
 .small-box .btn-administrar:hover,
-.small-box a.small-box-footer:hover,
-.small-box button.small-box-footer:hover,
-.small-box .btn-administrar:focus,
-.small-box a.small-box-footer:focus,
-.small-box button.small-box-footer:focus {
-    background-color: #e9ecef !important;
-    color: #000 !important;
-    outline: none;
-    box-shadow: none;
+.small-box button.small-box-footer:hover {
+    background-color: rgba(0, 0, 0, .15);
+    color: #fff;
+}
+
+.small-box .tarjeta-icono-footer,
+.small-box-footer .fas {
+    margin-left: 0.25rem;
 }
 
 /* Menú lateral personalizado */
@@ -207,6 +291,50 @@ body {
     .login-logo img {
         max-height: 70px;
     }
+}
+
+/* Estilo unificado para pantallas parametricas */
+:root {
+    --parametrico-color-principal: #1f6fb2;
+    --parametrico-color-principal-hover: #195a8f;
+}
+
+#gruposParametros .btn-primary,
+#gruposParametros .btn-outline-primary:hover,
+#gruposParametros .btn-outline-primary:focus {
+    background-color: var(--parametrico-color-principal);
+    border-color: var(--parametrico-color-principal);
+}
+
+#gruposParametros .btn-outline-primary {
+    color: var(--parametrico-color-principal);
+    border-color: var(--parametrico-color-principal);
+}
+
+#parametroModal .modal-header,
+#parametroFormModal .modal-header {
+    background-color: var(--parametrico-color-principal);
+    color: #fff;
+}
+
+#parametroModal .modal-header .close,
+#parametroFormModal .modal-header .close {
+    color: #fff;
+    opacity: 0.9;
+}
+
+#parametroModal .btn-primary,
+#parametroFormModal .btn-primary,
+#btnNuevoParametro {
+    background-color: var(--parametrico-color-principal);
+    border-color: var(--parametrico-color-principal);
+}
+
+#parametroModal .btn-primary:hover,
+#parametroFormModal .btn-primary:hover,
+#btnNuevoParametro:hover {
+    background-color: var(--parametrico-color-principal-hover);
+    border-color: var(--parametrico-color-principal-hover);
 }
 
 /* Dark mode complementario */
